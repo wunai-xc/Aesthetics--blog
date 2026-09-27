@@ -208,6 +208,25 @@ html[data-aurora="off"] .icon-btn:hover { transform: translateY(-2px); }
 .card-feature .card-title { font-size: var(--step-3); }
 .card-feature .card-media { aspect-ratio: 21 / 9; }
 
+/* 已读进度（阅读位置只记在本地，归档页显示） ---------------------------- */
+.read-track {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 4;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--c1) 18%, transparent);
+}
+.read-track > span { display: block; height: 100%; background: var(--c1); }
+.read-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  margin-left: auto;
+  color: var(--c1);
+}
+.read-flag i { width: 6px; height: 6px; border-radius: 50%; background: var(--c1); flex: 0 0 auto; }
+
 /* 封面（纯 CSS 生成，无位图） -------------------------------------------- */
 .cover-art {
   position: absolute;
@@ -691,15 +710,6 @@ html.no-js .to-top { display: none !important; }
 .input:focus { outline: none; border-color: var(--c1); box-shadow: 0 0 0 4px var(--c1-soft); }
 .input.is-error { border-color: var(--c3); }
 .form-note { font-size: var(--step--2); color: var(--text-dim); }
-.subscribe { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-.subscribe .input { flex: 1 1 14rem; }
-.form-success {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: var(--c1);
-  font-size: var(--step--1);
-}
 
 /* 分隔与装饰 ------------------------------------------------------------- */
 .divider {

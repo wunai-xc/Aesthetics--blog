@@ -5,9 +5,13 @@
 
 :root {
   /* 字体 ------------------------------------------------------------------ */
-  --font-display: "Fraunces", "Songti SC", Georgia, "Times New Roman", serif;
-  --font-sans: "Space Grotesk", "PingFang SC", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  /* 字体：只用系统字体栈，不请求任何外部字体文件（换回 Web 字体见 index.html 顶部注释）
+     ── display：标题用衬线。Latin 交给 Georgia，中文交给各平台的宋体系
+     ── sans：正文。Latin 交给 system-ui，中文按 PingFang → HarmonyOS → Noto → 雅黑 顺序回落
+     ── mono：等宽标签与代码 */
+  --font-display: Georgia, "Times New Roman", "Songti SC", "Noto Serif SC", "Source Han Serif SC", STSong, SimSun, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "HarmonyOS Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   /* 字阶（流体排版） ------------------------------------------------------ */
   --step--2: clamp(0.7rem, 0.68rem + 0.1vw, 0.76rem);

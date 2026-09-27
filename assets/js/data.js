@@ -13,7 +13,7 @@ AB.SITE = {
   email: 'hello@aesthetics.blog',
   repo: 'https://github.com/wunai-xc/Aesthetics--blog',
   since: 2019,
-  now: '正在写：配色系统与滚动叙事的边界'
+  now: '配色系统与滚动叙事的边界'
 };
 
 /* 首屏文案 --------------------------------------------------------------- */

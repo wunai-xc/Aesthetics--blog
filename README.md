@@ -15,6 +15,10 @@ python3 -m http.server 8080
 
 部署时把整个目录丢到任意静态托管（GitHub Pages / Netlify / 对象存储）即可，无需后端。
 
+页面**不请求任何外部资源**：没有 CDN、没有外链字体、没有图片（favicon 是行内 SVG data URI），
+字体全部走系统字体栈（见 `tokens.css` 的 `--font-*`），因此离线打开与国内直连都正常。
+想换回 Fraunces / Space Grotesk / JetBrains Mono，把 `index.html` 顶部注释里的那行 `<link>` 放回 `head` 即可。
+
 ## 目录结构
 
 ```
@@ -31,6 +35,7 @@ assets/js/fx.js            交互引擎：canvas、光标、揭示、3D 倾斜�
 assets/js/views.js         六个视图：home / archive / post / lab / about / 404
 assets/js/router.js        Hash 路由 + 三色遮罩过渡
 assets/js/app.js           引导层：加载动画、配色面板、设置、命令面板、快捷键
+feed.xml                   手写的 RSS（Hash 路由链接，域名变更时全局替换前缀）
 ```
 
 ## 路由
@@ -76,6 +81,12 @@ assets/js/app.js           引导层：加载动画、配色面板、设置、�
   body: `...HTML 片段...`       // 支持 h2/h3 自动生成右侧目录
 }
 ```
+
+代码块用 `<pre class="code-block" data-lang="js|css|html|sh"><code>…</code></pre>`：
+`fx.highlight()` 会按 `data-lang` 自动着色（从 `textContent` 重新着色，可重复调用），
+`data.js` 里已手写的 `tok-*` 片段只是「关掉 JS 时仍然有色」的兜底版。
+
+加完文章后，顺手在 `feed.xml` 顶部补一个 `<item>`（内容取自 `title` / `date` / `excerpt` / `tags`）。
 
 ## 交互与无障碍约定
 

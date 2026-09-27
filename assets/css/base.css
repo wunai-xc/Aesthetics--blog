@@ -313,6 +313,9 @@ pre.code-block,
 .prose .tok-key { color: var(--c2); }
 .prose .tok-val { color: var(--c3); }
 .prose .tok-com { color: var(--text-dim); font-style: italic; }
+.prose .tok-str { color: var(--c3); }
+.prose .tok-num { color: var(--c1); }
+.prose .tok-fn { color: var(--text); font-weight: 500; }
 
 /* 质感层：颗粒 + 氛围光 --------------------------------------------------- */
 .grain {

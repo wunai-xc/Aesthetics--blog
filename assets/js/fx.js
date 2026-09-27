@@ -530,6 +530,56 @@
     });
   };
 
+  /* ---------------------------------------------------- 语法着色 */
+  var HL_KEYWORDS = {
+    js: 'var let const function return if else for while do new delete typeof instanceof in of class extends this null undefined true false break continue try catch finally throw switch case default async await yield import export from as window document Math JSON navigator localStorage performance requestAnimationFrame setTimeout setInterval clearInterval addEventListener',
+    css: 'important media supports keyframes from to root and not screen print hover focus active',
+    json: 'true false null',
+    sh: 'git npm cd python3 mkdir rm ls echo export curl'
+  };
+
+  function hlEscape(text) {
+    return text.replace(/[&<>]/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c];
+    });
+  }
+
+  function hlTokens(text, lang) {
+    var keywords = (HL_KEYWORDS[lang] || '').split(' ');
+    var pattern = /(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$@-][\w$-]*)/g;
+    var out = '';
+    var last = 0;
+    var m;
+    while ((m = pattern.exec(text)) !== null) {
+      out += hlEscape(text.slice(last, m.index));
+      last = pattern.lastIndex;
+      var next = text.charAt(last);
+      if (m[1]) out += '<span class="tok-com">' + hlEscape(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="tok-str">' + hlEscape(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="tok-num">' + m[3] + '</span>';
+      else if (keywords.indexOf(m[4]) > -1) out += '<span class="tok-key">' + hlEscape(m[4]) + '</span>';
+      else if (lang === 'css' && next === ':') out += '<span class="tok-val">' + hlEscape(m[4]) + '</span>';
+      else if (next === '(') out += '<span class="tok-fn">' + hlEscape(m[4]) + '</span>';
+      else out += hlEscape(m[4]);
+    }
+    out += hlEscape(text.slice(last));
+    return out;
+  }
+
+  /* 按 data-lang 给代码块上色。data.js 里手写的 tok-* 片段保留原样，
+     它们是「关掉 JS」时仍然有色的那版；这里只是让所有块的表现一致。
+     从 textContent 重新着色，因此重复调用是幂等的。 */
+  fx.highlight = function (root) {
+    fx.qsa('pre.code-block, .code-block pre', root).forEach(function (pre) {
+      var code = pre.querySelector('code') || pre;
+      var lang = (pre.getAttribute('data-lang') || code.getAttribute('data-lang') || '').toLowerCase();
+      var source = code.textContent;
+      if (!source || source.length > 6000) return;
+      var html = hlTokens(source, lang);
+      if (html !== code.innerHTML) code.innerHTML = html;
+    });
+  };
+
   /* ---------------------------------------------------- 代码复制 */
   fx.codeBlocks = function (root) {
     fx.qsa('pre.code-block, .code-block pre', root).forEach(function (pre) {
@@ -548,7 +598,10 @@
       btn.textContent = '复制';
       btn.setAttribute('aria-label', '复制代码');
       btn.addEventListener('click', function () {
-        var text = pre.innerText;
+        /* 复制 <code> 的文本：语言标签与复制按钮本身都挂在 pre 上，
+           直接读 pre.innerText 会把它们一起复制进去 */
+        var source = pre.querySelector('code') || pre;
+        var text = source.textContent.replace(/^\s*\n/, '').replace(/\s+$/, '');
         var done = function () {
           btn.textContent = '已复制';
           btn.classList.add('is-done');
@@ -808,6 +861,7 @@
     fx.marquees(root);
     fx.counters(root);
     fx.typewriter(root);
+    fx.highlight(root);
     fx.codeBlocks(root);
     fx.toc(root);
     fx.coverShift(root);

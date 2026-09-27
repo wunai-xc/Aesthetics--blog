@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  feed.xml — 手写的静态 RSS。
+  本站是 Hash 路由的单页站点，所以文章链接带 #/post/<slug>；阅读器会照原样打开，页面自己会路由到那一篇。
+  新增文章后需要手动往这里补一个 <item>（顺序：新文章在最上面），并在 index.html 的 <link rel="alternate"> 保持不变。
+  域名变更时，替换下面所有 https://wunai-xc.github.io/Aesthetics--blog/ 前缀即可。
+-->
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AESTHETICS — 纯粹色彩美学博客</title>
+    <link>https://wunai-xc.github.io/Aesthetics--blog/</link>
+    <description>关于色彩、动效与排版的静态博客：八套配色系统、零依赖、零外部请求。</description>
+    <language>zh-CN</language>
+    <copyright>© 2026 AESTHETICS</copyright>
+    <generator>手写 · 数据源 assets/js/data.js</generator>
+    <lastBuildDate>Wed, 11 Feb 2026 09:00:00 +0800</lastBuildDate>
+    <atom:link href="https://wunai-xc.github.io/Aesthetics--blog/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+
+    <item>
+      <title>色彩即结构：先把颜色排进网格，再写字</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/color-as-structure</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/color-as-structure</guid>
+      <pubDate>Wed, 11 Feb 2026 09:00:00 +0800</pubDate>
+      <category>色彩</category>
+      <category>排版</category>
+      <description>大多数人先画版式再上色，结果颜色变成装饰。反过来做——先用三个色相把页面切成区块，字只是落在色块上的附属物。</description>
+    </item>
+
+    <item>
+      <title>为阅读而动的七个原则</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/motion-for-reading</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/motion-for-reading</guid>
+      <pubDate>Tue, 03 Feb 2026 09:00:00 +0800</pubDate>
+      <category>动效</category>
+      <category>前端</category>
+      <description>动效不是装饰，它是给阅读指路的灯。七个可以直接照抄的原则，含每一条的反例与对应的 CSS 实现思路。</description>
+    </item>
+
+    <item>
+      <title>在浏览器里调和一整套配色：HSL 够用吗</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/oklch-practice</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/oklch-practice</guid>
+      <pubDate>Tue, 27 Jan 2026 09:00:00 +0800</pubDate>
+      <category>色彩</category>
+      <category>前端</category>
+      <description>HSL 的亮度不等于感知亮度，蓝色和黄色会骗你。本文给出一个不引入任何依赖的调和流程：HSL 生成、感知校正、再输出成可用的 CSS 变量。</description>
+    </item>
+
+    <item>
+      <title>排版三级秤：字阶、行高与留白怎么互相让步</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/type-scale-three</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/type-scale-three</guid>
+      <pubDate>Mon, 19 Jan 2026 09:00:00 +0800</pubDate>
+      <category>排版</category>
+      <category>方法论</category>
+      <description>字阶不是一堆数字，而是一把秤。字越大行高越紧、字越小行高越松，留白则由字阶的倍率反推出来。</description>
+    </item>
+
+    <item>
+      <title>噪点与颗粒：给纯色加一点呼吸</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/noise-and-grain</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/noise-and-grain</guid>
+      <pubDate>Thu, 08 Jan 2026 09:00:00 +0800</pubDate>
+      <category>质感</category>
+      <category>色彩</category>
+      <description>大面积的纯色在屏幕上会显得死板甚至刺眼，解决办法不是加渐变，而是加一层振幅极小的噪点——用 SVG 滤镜生成，零字节图片。</description>
+    </item>
+
+    <item>
+      <title>静态站点也能全互动：零依赖交互清单</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/interactive-static</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/interactive-static</guid>
+      <pubDate>Sun, 21 Dec 2025 09:00:00 +0800</pubDate>
+      <category>前端</category>
+      <category>动效</category>
+      <description>没有框架、没有构建、没有后端，一样可以做到命令面板、路由过渡、滚动追踪、本地收藏与实时配色。这是本站完整的交互清单与实现方式。</description>
+    </item>
+
+    <item>
+      <title>配色食谱：八套可以直接抄走的色彩系统</title>
+      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/palette-cookbook</link>
+      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/palette-cookbook</guid>
+      <pubDate>Fri, 05 Dec 2025 09:00:00 +0800</pubDate>
+      <category>色彩</category>
+      <category>质感</category>
+      <description>八套配色，每组三个色相、一个地色，附带使用场景建议。它们已经内置在站点设置里，点一下就能整站替换。</description>
+    </item>
+  </channel>
+</rss>

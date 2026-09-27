@@ -60,8 +60,8 @@
     }
   }
 
-  /* 页面本身没有图片，唯一的远程资源是外链字体——被墙或很慢时不该拖住首屏。
-     因此：load 事件与 1.4s 硬上限，谁先到用谁，最短展示 0.7s。 */
+  /* 页面没有位图、也不请求外部字体：只保证一个最短展示时间，load 一到就走，
+     外加 1.4s 硬上限，避免任何意外把首屏锁在加载层下面。 */
   function scheduleLoaderEnd() {
     var started = window.performance && window.performance.now ? window.performance.now() : Date.now();
     var now = function () {

@@ -44,15 +44,25 @@
     if (o.feature) cls += ' card-feature span-2';
     if (o.wide) cls += ' card-wide';
     var num = ('0' + (index + 1)).slice(-2);
+    /* 阅读进度只记在本地；低于 5% 不显示，免得刚点开就出现「已读」 */
+    var ratio = o.read ? AB.store.readRatio(post.slug) : 0;
+    var pct = Math.round(ratio * 100);
+    var readMark = ratio >= 0.05
+      ? '<span class="read-track" aria-hidden="true"><span style="width:' + pct + '%"></span></span>'
+      : '';
+    var readFlag = ratio >= 0.05
+      ? '<span class="read-flag"><i aria-hidden="true"></i>' + (pct >= 97 ? '已读完' : '已读 ' + pct + '%') + '</span>'
+      : '';
     return '' +
       '<article class="' + cls + '" data-tilt data-tilt-depth="' + (o.feature ? 3 : 5) + '" data-reveal="up" data-reveal-delay="' + (o.delay || 0) + '">' +
         '<a class="card-link" href="#/post/' + post.slug + '" aria-label="阅读：' + esc(post.title) + '"></a>' +
+        readMark +
         '<div class="card-media">' + coverMarkup(post, index) + '<span class="card-media-num">' + num + '</span></div>' +
         '<div class="card-body">' +
           '<div class="card-meta">' + tagsMarkup(post, 'flat') + '</div>' +
           '<h3 class="card-title">' + esc(post.title) + '</h3>' +
           '<p class="card-excerpt">' + esc(post.excerpt) + '</p>' +
-          '<div class="card-meta"><span>' + dateLabel(post.date) + '</span><span class="dot">/</span><span>' + post.minutes + ' 分钟</span></div>' +
+          '<div class="card-meta"><span>' + dateLabel(post.date) + '</span><span class="dot">/</span><span>' + post.minutes + ' 分钟</span>' + readFlag + '</div>' +
         '</div>' +
       '</article>';
   }
@@ -66,47 +76,10 @@
       '</button>';
   }
 
-  function subscribeForm(id) {
-    return '' +
-      '<form class="subscribe" data-subscribe novalidate>' +
-        '<label class="visually-hidden" for="' + id + '">邮箱</label>' +
-        '<input class="input" id="' + id + '" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>' +
-        '<button class="btn btn-primary" type="submit">订阅更新<span class="btn-arrow">→</span></button>' +
-        '<p class="form-note" data-subscribe-note>静态站点演示：不会真的发送邮件，数据也不会上传。</p>' +
-      '</form>';
-  }
-
   function marqueeTrack(items) {
     return items.map(function (item, i) {
       return (i % 2 === 1) ? '<span aria-hidden="true">' + item + '</span>' : '<span>' + esc(item) + '</span>';
     }).join('');
-  }
-
-  /* 订阅表单通用绑定（首页与关于页共用） */
-  function bindSubscribe(root) {
-    AB.fx.qsa('form[data-subscribe]', root).forEach(function (form) {
-      var input = form.querySelector('input[type="email"]');
-      var note = form.querySelector('[data-subscribe-note]');
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var value = (input.value || '').trim();
-        var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
-        if (!ok) {
-          input.classList.add('is-error');
-          if (note) note.textContent = '邮箱格式看起来不太对，再检查一下？';
-          AB.fx.toast('请填写有效的邮箱');
-          return;
-        }
-        input.classList.remove('is-error');
-        var rect = form.getBoundingClientRect();
-        var done = document.createElement('p');
-        done.className = 'form-success';
-        done.innerHTML = '<i aria-hidden="true">✳</i><span>已记录 ' + esc(value) + '（本地演示，不会发送）</span>';
-        form.replaceWith(done);
-        AB.fx.confetti({ x: rect.left + rect.width / 2, y: rect.top, count: 70 });
-        AB.fx.toast('订阅成功（演示）');
-      });
-    });
   }
 
   function bindPalettes(root) {
@@ -235,11 +208,19 @@
       '<section class="section container">' +
         '<div class="rail">' +
           '<div class="stack" data-reveal="up">' +
-            '<p class="eyebrow">订阅</p>' +
-            '<h2>有新文章时，<br>给你发一封短信</h2>' +
-            '<p class="lede">平均每月一到两篇，不推送、不带追踪像素。目前正在写：<span class="accent-1" data-type="' + esc(AB.SITE.now) + '|配色系统与滚动叙事的边界|把动效做成语法而不是装饰">' + '</span><span class="accent-1" aria-hidden="true">▌</span></p>' +
+            '<p class="eyebrow">更新</p>' +
+            '<h2>没有邮件列表<br>只有一条 RSS</h2>' +
+            '<p class="lede">纯静态站点没有后端，订阅框填了也发不出去，所以这里不放表单。想第一时间看到新文章就订阅 RSS；不想订阅，收藏这个页面也一样。</p>' +
+            '<div class="cluster">' +
+              '<a class="btn btn-outline" href="feed.xml">订阅 RSS<span class="btn-arrow">→</span></a>' +
+              '<a class="btn btn-ghost" href="#/archive">浏览全部文章</a>' +
+            '</div>' +
           '</div>' +
-          '<div data-reveal="up" data-reveal-delay="0.1">' + subscribeForm('subscribe-home') + '</div>' +
+          '<div class="stack" data-reveal="up" data-reveal-delay="0.1">' +
+            '<p class="mono-label">正在写</p>' +
+            '<p class="lede"><span class="accent-1" data-type="' + esc(AB.SITE.now) + '|把动效做成语法而不是装饰|色块面积与字阶的换算表">' + '</span><span class="accent-1" aria-hidden="true">▌</span></p>' +
+            '<p class="form-note">平均每月一到两篇。写完会出现在 <a href="#/archive">文章列表</a> 里，也会进 <code>feed.xml</code>。</p>' +
+          '</div>' +
         '</div>' +
       '</section>';
 
@@ -247,7 +228,6 @@
       title: AB.SITE.name + ' — ' + AB.SITE.tagline,
       html: html,
       mount: function (root) {
-        bindSubscribe(root);
         bindPalettes(root);
       }
     };
@@ -261,7 +241,7 @@
       '<section class="archive-head container">' +
         '<p class="eyebrow" data-reveal="fade">Index</p>' +
         '<h1 class="archive-title" data-reveal="up">全部文章 <span class="thin text-dim">' + AB.POSTS.length + ' 篇</span></h1>' +
-        '<p class="lede" data-reveal="up" data-reveal-delay="0.08">按时间倒序。可以按标签过滤、用关键词搜索，或切换成紧凑列表视图。搜索与过滤都在浏览器里完成。</p>' +
+        '<p class="lede" data-reveal="up" data-reveal-delay="0.08">按时间倒序。可以按标签过滤、用关键词搜索，或切换成紧凑列表视图；搜索与过滤都在浏览器里完成，读过的文章会带上本地阅读进度。</p>' +
       '</section>' +
 
       '<section class="container">' +
@@ -335,11 +315,12 @@
             return;
           }
           list.innerHTML = posts.map(function (post, i) {
-            return '<div data-slug="' + post.slug + '">' + postCard(post, { wide: true, index: i, delay: (Math.min(i, 5) * 0.05).toFixed(2) }) + '</div>';
+            return '<div data-slug="' + post.slug + '">' + postCard(post, { wide: true, index: i, read: true, delay: (Math.min(i, 5) * 0.05).toFixed(2) }) + '</div>';
           }).join('');
 
           if (countLabel) {
-            countLabel.textContent = posts.length + ' 篇' + (state.tag ? ' · ' + state.tag : '') + (state.text ? ' · “' + state.text + '”' : '');
+            var readCount = posts.filter(function (p) { return AB.store.readRatio(p.slug) >= 0.95; }).length;
+            countLabel.textContent = posts.length + ' 篇' + (state.tag ? ' · ' + state.tag : '') + (state.text ? ' · “' + state.text + '”' : '') + (readCount ? ' · 已读完 ' + readCount : '');
           }
 
           if (animateFlip && !(AB.store.get('motion') === 'off')) {
@@ -473,8 +454,8 @@
           '</div>' +
           '<div class="divider" aria-hidden="true"></div>' +
           '<div class="spread">' +
-            '<div>有新文章时想收到通知吗？</div>' +
-            '<a class="btn btn-primary" href="#/" data-magnetic>回到首页订阅</a>' +
+            '<div>这篇看完了。列表里还有 ' + (AB.POSTS.length - 1) + ' 篇关于色彩、动效与排版的笔记。</div>' +
+            '<a class="btn btn-outline" href="#/archive" data-magnetic>回到文章列表</a>' +
           '</div>' +
         '</footer>' +
       '</article>';
@@ -844,12 +825,13 @@
       '<section class="section container">' +
         '<div class="rail">' +
           '<div data-reveal="up">' +
-            '<p class="eyebrow">轨迹</p>' +
+            '<p class="eyebrow">运行轨迹</p>' +
             '<ul class="timeline">' +
-              '<li><p class="timeline-year">' + AB.SITE.since + '</p><p>开始做静态站点，用 Markdown 加一套灰阶主题。</p></li>' +
-              '<li><p class="timeline-year">2022</p><p>第一次把颜色做成变量，发现换主题只要改一行。</p></li>' +
-              '<li><p class="timeline-year">2024</p><p>转向「色块即容器」的做法，去掉大部分边框与阴影。</p></li>' +
-              '<li><p class="timeline-year">2026</p><p>重写整站：八套配色、滚动叙事、可交互的色彩实验室。</p></li>' +
+              '<li><p class="timeline-year">01</p><p><code>index.html</code> 解析，行内脚本把 <code>no-js</code> 换成 <code>js</code>。</p></li>' +
+              '<li><p class="timeline-year">02</p><p><code>store.js</code> 从 localStorage 恢复偏好，写到 <code>data-palette</code> 等属性上。</p></li>' +
+              '<li><p class="timeline-year">03</p><p><code>app.js</code> 引导：加载层、配色面板、命令面板、快捷键、常驻动效层。</p></li>' +
+              '<li><p class="timeline-year">04</p><p><code>router.js</code> 读 hash → 从 <code>AB.views</code> 取视图 → 渲染进 <code>#view</code>。</p></li>' +
+              '<li><p class="timeline-year">05</p><p><code>fx.scope()</code> 给新视图挂上揭示、倾斜、目录追踪与代码着色。</p></li>' +
             '</ul>' +
           '</div>' +
           '<div class="stack" data-reveal="up" data-reveal-delay="0.08">' +
@@ -876,20 +858,21 @@
       '<section class="section container">' +
         '<div class="rail">' +
           '<div class="stack" data-reveal="up">' +
-            '<p class="eyebrow">订阅</p>' +
-            '<h2>每月一到两封，只写新文章</h2>' +
-            '<p class="text-dim">没有营销、没有第三方统计。你也可以只把本站加到书签，随时回来看看。</p>' +
+            '<p class="eyebrow">更新订阅</p>' +
+            '<h2>没有邮件列表<br>只有一条 RSS</h2>' +
+            '<p class="text-dim">纯静态站点没有后端，表单填了也发不出去。新文章会写进 <code>feed.xml</code>，用任意阅读器订阅即可；也可以只把本站加入书签。</p>' +
           '</div>' +
-          '<div data-reveal="up" data-reveal-delay="0.08">' + subscribeForm('subscribe-about') + '</div>' +
+          '<div class="cluster" data-reveal="up" data-reveal-delay="0.08">' +
+            '<a class="btn btn-primary" href="feed.xml">订阅 RSS<span class="btn-arrow">→</span></a>' +
+            '<a class="btn btn-outline" href="' + esc(AB.SITE.repo) + '" target="_blank" rel="noopener">仓库源码</a>' +
+          '</div>' +
         '</div>' +
       '</section>';
 
     return {
       title: '关于 — ' + AB.SITE.name,
       html: html,
-      mount: function (root) {
-        bindSubscribe(root);
-      }
+      mount: function () {}
     };
   };
 
