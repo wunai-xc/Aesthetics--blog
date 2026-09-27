@@ -293,6 +293,28 @@
   --grad-hot: linear-gradient(100deg, var(--c1) 0%, var(--c3) 52%, var(--c2) 100%);
   --grad-cool: linear-gradient(140deg, var(--c2) 0%, var(--c1) 100%);
   --grad-mix: conic-gradient(from 210deg, var(--c1), var(--c2), var(--c3), var(--c1));
+
+  /* 液态玻璃 -------------------------------------------------------------- */
+  /* 卡片与面板共用的一层玻璃：半透明底色 + 背景虚化 + 顶边一道高光描边。
+     哪些组件用它、玻璃画在哪个属性上，见 glass.css；这里只放可调参数。
+     --glass-blur / --glass-sat 调虚化强度，--glass-tint* 调通透度。 */
+  --glass-blur: 16px;
+  --glass-sat: 1.6;
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  --glass-tint: color-mix(in srgb, var(--surface, #131319) 62%, transparent);
+  --glass-tint-2: color-mix(in srgb, var(--surface-2, #1a1a22) 66%, transparent);
+  --glass-tint-strong: color-mix(in srgb, var(--surface, #131319) 84%, transparent);
+  /* 高光的位置跟着 --mx / --my 走：fx.js 的 3D 倾斜会把指针位置写进这两个变量 */
+  --glass-sheen: radial-gradient(135% 105% at var(--mx, 16%) var(--my, -18%), rgba(255, 255, 255, 0.18), transparent 62%);
+  --glass-sheen-2: radial-gradient(135% 105% at var(--mx, 16%) var(--my, -18%), rgba(255, 255, 255, 0.30), transparent 64%);
+  --glass-caustic: radial-gradient(80% 62% at 92% 112%, color-mix(in srgb, var(--c2, #6b5cff) 18%, transparent), transparent 64%);
+  --glass-surface: var(--glass-sheen), var(--glass-caustic), var(--glass-tint);
+  --glass-surface-2: var(--glass-sheen-2), var(--glass-caustic), var(--glass-tint-2);
+  --glass-surface-strong: var(--glass-sheen), var(--glass-caustic), var(--glass-tint-strong);
+  /* 描边与顶边高光都跟着 --text 走：深色配色上是亮边，亮色配色上是深边 */
+  --glass-edge: color-mix(in srgb, var(--text, #fff) 15%, transparent);
+  --glass-rim: color-mix(in srgb, var(--text, #fff) 34%, transparent);
+  --glass-shadow: 0 18px 38px -28px rgba(0, 0, 0, 0.6), 0 2px 8px -5px rgba(0, 0, 0, 0.45);
 }
 
 /* 色彩模式：轻量 / 关闭 */

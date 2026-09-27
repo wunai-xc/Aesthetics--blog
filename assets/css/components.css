@@ -135,13 +135,13 @@ html[data-aurora="off"] .icon-btn:hover { transform: translateY(-2px); }
 .tag-pill.t3 { background: var(--c3-soft); }
 
 /* 卡片 ------------------------------------------------------------------- */
+/* 底色与虚化都不在这里写：卡片面由 glass.css 的液态玻璃层提供 */
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
-  background: var(--surface);
   overflow: hidden;
   isolation: isolate;
   transition: border-color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
@@ -297,7 +297,7 @@ html[data-marquee="off"] .marquee-track { animation: none; }
 .marquee-reverse .marquee-track { animation-direction: reverse; }
 .marquee-xl .marquee-track span { font-size: var(--step-5); letter-spacing: -0.02em; }
 
-/* 调色板卡 --------------------------------------------------------------- */
+/* 调色板卡（表面同样由 glass.css 提供，::after 留给右下角的对勾） */
 .palette-grid {
   display: grid;
   gap: 0.6rem;
@@ -308,7 +308,6 @@ html[data-marquee="off"] .marquee-track { animation: none; }
   padding: 0.7rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-m);
-  background: var(--surface);
   text-align: left;
   overflow: hidden;
   transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-fast);
@@ -347,14 +346,13 @@ html[data-marquee="off"] .marquee-track { animation: none; }
 }
 .swatch-strip button:hover { transform: translateY(-8px); filter: saturate(1.2); }
 
-/* 弹层（dialog） --------------------------------------------------------- */
+/* 弹层（dialog）：玻璃面在 glass.css（比卡片更厚一档） ------------------- */
 .dialog {
   width: min(46rem, calc(100vw - 2 * var(--space-s)));
   max-height: min(84svh, 46rem);
   padding: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
-  background: color-mix(in srgb, var(--bg) 92%, var(--surface));
   color: var(--text);
   box-shadow: var(--shadow);
   overflow: hidden;

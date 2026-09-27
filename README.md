@@ -33,6 +33,7 @@ assets/css/layout.css      站点骨架：页头、导航、移动菜单、页�
 assets/css/components.css  按钮、卡片、跑马灯、弹层、提示、加载动画
 assets/css/views.css       各视图版式（归档、文章、实验室、书架、隐私页）
 assets/css/animations.css  关键帧、滚动揭示、路由过渡、动效降级
+assets/css/glass.css       液态玻璃卡片面：卡片 / 面板 / 弹层共用的一层玻璃（参数在 tokens.css）
 assets/js/data.js          站点信息、配色表、命令表、文章正文（唯一的数据源）
 assets/js/store.js         localStorage 偏好、配色切换、收藏/点赞/阅读进度
 assets/js/fx.js            交互引擎：canvas、光标、揭示、3D 倾斜、彩纸、目录、小节链接
@@ -143,3 +144,5 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
 - 动效分三档：完整 / 轻量 / 关闭；系统 `prefers-reduced-motion: reduce` 时默认降级为「轻量」，用户仍可手动选「完整」。
 - 只动 `transform` 与 `opacity`；滚动读写统一在 `requestAnimationFrame` 内完成；标签页隐藏时停掉 canvas 循环。
 - 键盘可达：跳转到正文的 skip link、命令面板方向键导航、`dialog` 原生焦点管理。
+- 卡片表面统一走 `glass.css` 的液态玻璃层（`backdrop-filter`）：不支持虚化、系统开了「减少透明度」
+  （`prefers-reduced-transparency: reduce`）或动效关闭时，自动换成更实的底色，正文对比度不靠玻璃撑。

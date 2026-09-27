@@ -1,0 +1,64 @@
+/* ==========================================================================
+   glass.css — 液态玻璃卡片面
+   --------------------------------------------------------------------------
+   全站所有「卡片」共用同一层玻璃：半透明底色 + 背景虚化 + 顶边一道高光描边。
+   参数在 tokens.css 的「液态玻璃」一段（--glass-*），要整体调通透度只改那里。
+
+   为什么玻璃直接画在卡片本体上，而不是某个伪元素上：
+   - 卡片自己的 background 不参与自己的 backdrop，底色不会被虚化两次；
+   - 卡片里的正文、封面、按钮永远清晰（虚化只作用于卡片背后的东西）；
+   - 卡片嵌卡片（实验室面板里的对比度行、设置面板里的配色卡）与顶层 <dialog>
+     都能各虚化各的——伪元素 + z-index: -1 那种写法在这些场景里会被裁掉或错位。
+
+   本文件在 index.html / 404.html 里最后加载：卡片底色由这里接管，
+   所以 components.css / views.css 里的卡片已经不再写 background。
+   ========================================================================== */
+
+/* 玻璃面本身 ------------------------------------------------------------- */
+:is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card,
+    .lab-panel, .lab-current, .contrast-row, .hero-figure, .dialog) {
+  isolation: isolate;                    /* 卡片自己的层叠关系关在内部 */
+  background: var(--glass-layer, var(--glass-surface));
+  border-color: var(--glass-edge);       /* 四边：淡淡的轮廓 */
+  border-top-color: var(--glass-rim);    /* 顶边亮一道 = 玻璃的厚度 */
+  box-shadow: var(--glass-shadow);       /* 浮起来一点点 */
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* 悬停时玻璃更亮一档：高光加强、底色换成第二层表面色 */
+:is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card, .hero-figure):hover {
+  background: var(--glass-surface-2);
+}
+
+/* 命令面板 / 设置面板：同一层玻璃，但更厚、投影更重，保证面板里的字读得清 */
+.dialog {
+  --glass-layer: var(--glass-surface-strong);
+  box-shadow: var(--shadow);
+}
+
+/* ==========================================================================
+   降级：不支持虚化、系统要求减少透明、或用户关掉动效（此时氛围光已停，
+   玻璃背后只剩一片纯色，虚化没有意义）——三种情况都改用更实的底色，
+   卡片的可读性不靠玻璃撑。
+   ========================================================================== */
+@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+  :root {
+    --glass-tint: var(--glass-tint-strong);
+    --glass-tint-2: var(--glass-tint-strong);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-tint: var(--glass-tint-strong);
+    --glass-tint-2: var(--glass-tint-strong);
+    --glass-filter: none;
+  }
+}
+
+html[data-motion="off"] {
+  --glass-tint: var(--glass-tint-strong);
+  --glass-tint-2: var(--glass-tint-strong);
+  --glass-filter: none;
+}
