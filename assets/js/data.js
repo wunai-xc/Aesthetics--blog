@@ -320,7 +320,7 @@ AB.POSTS = [
       <blockquote>
         <p>能被静态托管的交互，就不要引入运行时。少一层依赖，多一年可维护性。</p>
       </blockquote>
-      <p>仓库里没有 <code>node_modules</code>，总共不到 90KB 的文本文件，克隆下来直接双击 <code>index.html</code> 就能用。</p>
+      <p>仓库里没有 <code>node_modules</code>，十几个纯文本文件，克隆下来直接双击 <code>index.html</code> 就能用。</p>
     `
   },
   {

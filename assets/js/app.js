@@ -60,7 +60,8 @@
     }
   }
 
-  /* 等页面资源就绪，但至少展示 0.7s；最多等 5s 兜底 */
+  /* 页面本身没有图片，唯一的远程资源是外链字体——被墙或很慢时不该拖住首屏。
+     因此：load 事件与 1.4s 硬上限，谁先到用谁，最短展示 0.7s。 */
   function scheduleLoaderEnd() {
     var started = window.performance && window.performance.now ? window.performance.now() : Date.now();
     var now = function () {
@@ -72,7 +73,7 @@
     }
     if (doc.readyState === 'complete') release();
     else window.addEventListener('load', release, { once: true });
-    window.setTimeout(finishLoader, 5000);
+    window.setTimeout(finishLoader, 1400);
   }
 
   /* ======================================================================

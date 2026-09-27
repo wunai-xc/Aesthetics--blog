@@ -192,14 +192,17 @@
             '<div class="cluster" style="gap:var(--space-l)">' +
               '<div class="stat"><span class="stat-value" data-count="' + AB.POSTS.length + '">0</span><span class="stat-label">篇文章</span></div>' +
               '<div class="stat"><span class="stat-value" data-count="' + AB.PALETTES.length + '">0</span><span class="stat-label">套配色</span></div>' +
-              '<div class="stat"><span class="stat-value" data-count="0" data-suffix="KB">0</span><span class="stat-label">总体积</span></div>' +
+              '<div class="stat"><span class="stat-value" data-count="' + AB.tagList.length + '">0</span><span class="stat-label">个标签</span></div>' +
+              '<div class="stat"><span class="stat-value">0</span><span class="stat-label">个运行时依赖</span></div>' +
             '</div>' +
             '<div class="divider" aria-hidden="true"></div>' +
-            '<div class="meters stack">' +
-              '<div class="meter"><div class="meter-top"><b>HTML 结构</b><span>38%</span></div><div class="meter-track"><span class="meter-fill" data-value="38" style="background:var(--c1)"></span></div></div>' +
-              '<div class="meter"><div class="meter-top"><b>CSS 色彩与动效</b><span>42%</span></div><div class="meter-track"><span class="meter-fill" data-value="42" style="background:var(--c2)"></span></div></div>' +
-              '<div class="meter"><div class="meter-top"><b>原生 JS 交互</b><span>20%</span></div><div class="meter-track"><span class="meter-fill" data-value="20" style="background:var(--c3)"></span></div></div>' +
-            '</div>' +
+            '<p class="mono-label">结构约定</p>' +
+            '<ul class="text-dim">' +
+              '<li>1 个 HTML 文件，6 层 CSS：变量 → 基础 → 骨架 → 组件 → 视图 → 动效</li>' +
+              '<li>6 个 JS 模块：数据 / 状态 / 动效引擎 / 视图 / 路由 / 引导</li>' +
+              '<li>一套配色 = 19 个 CSS 变量，换色时版式与明度对比关系不变</li>' +
+              '<li>正文内联在 data.js：加一篇 = 追加一个对象，刷新即生效</li>' +
+            '</ul>' +
             '<p class="text-dim" data-reveal="up">没有框架、没有构建步骤、没有一张位图。所有封面与氛围光都是 CSS 渐变与 canvas 实时算出来的。</p>' +
           '</div>' +
         '</div>' +
@@ -625,7 +628,7 @@
           '<div class="stack" data-reveal="up" data-reveal-delay="0.08">' +
             '<h2>这些颜色从哪来</h2>' +
             '<p class="text-dim">每一套配色都是「一地色 + 三色相」结构：主色负责指示、副色负责氛围、刺激色负责状态。切换它们时版式与对比关系保持不变，所以整站结构不会走形。</p>' +
-            '<p class="text-dim">实验室里生成的颜色会写入 20 个 CSS 变量并保存在本地。刷新页面后依然是你选的那一套。</p>' +
+            '<p class="text-dim">实验室里生成的颜色会写入 19 个 CSS 变量并保存在本地。刷新页面后依然是你选的那一套。</p>' +
             '<a class="btn btn-ghost" href="#/archive">去看配色方法论<span class="btn-arrow">→</span></a>' +
           '</div>' +
         '</div>' +
@@ -815,13 +818,8 @@
         '<div class="stack" data-reveal="up">' +
           '<h2>为什么做这个站</h2>' +
           '<p class="text-dim">我见过太多「技术没问题但不好看」的页面，也见过太多「好看但不好用」的页面。区别往往不在组件库，而在有没有把颜色当成结构来对待。</p>' +
-          '<p class="text-dim">所以我把整站做成一个可切换的实验场：八套配色、五种动效强度、可调的颗粒与氛围光。同一个版式在不同配色下的表现，是这里最想讨论的问题。</p>' +
-          '<div class="meters">' +
-            '<div class="meter"><div class="meter-top"><b>色彩系统</b><span>92%</span></div><div class="meter-track"><span class="meter-fill" data-value="92" style="background:var(--c1)"></span></div></div>' +
-            '<div class="meter"><div class="meter-top"><b>CSS 动效</b><span>88%</span></div><div class="meter-track"><span class="meter-fill" data-value="88" style="background:var(--c2)"></span></div></div>' +
-            '<div class="meter"><div class="meter-top"><b>中文排版</b><span>76%</span></div><div class="meter-track"><span class="meter-fill" data-value="76" style="background:var(--c3)"></span></div></div>' +
-            '<div class="meter"><div class="meter-top"><b>原生 JS</b><span>84%</span></div><div class="meter-track"><span class="meter-fill" data-value="84" style="background:var(--c1)"></span></div></div>' +
-          '</div>' +
+          '<p class="text-dim">所以我把整站做成一个可切换的实验场：八套配色、三档动效强度（完整 / 轻量 / 关闭）、可调的颗粒与氛围光。同一个版式在不同配色下的表现，是这里最想讨论的问题。</p>' +
+          '<p class="text-dim">这个站本身也是样本：文章、配色、命令全部内联在 <code>assets/js/data.js</code>，没有一行数据来自后端；偏好只写 localStorage，页面上没有任何埋点或统计脚本。</p>' +
           '<div class="contact-row">' +
             '<a class="btn btn-primary" href="mailto:' + esc(AB.SITE.email) + '" data-magnetic>写信给我<span class="btn-arrow">→</span></a>' +
             '<a class="btn btn-outline" href="' + esc(AB.SITE.repo) + '" target="_blank" rel="noopener">仓库源码</a>' +
