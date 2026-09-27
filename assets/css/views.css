@@ -269,6 +269,7 @@
   border-top: 1px solid var(--line);
 }
 .post-nav { display: grid; gap: var(--space-s); margin-top: var(--space-m); }
+/* 以下卡片的实色底是「用不上玻璃的内核」看到的兜底（glass.css 会盖掉它） */
 .post-nav-card {
   position: relative;
   display: grid;
@@ -276,6 +277,7 @@
   padding: var(--space-m);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
+  background: var(--surface);
   overflow: hidden;
   transition: transform var(--dur) var(--ease-out), border-color var(--dur-fast);
 }
@@ -323,6 +325,7 @@
   padding: var(--space-m);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
+  background: var(--surface);
 }
 .lab-panel h2 { font-size: var(--step-2); margin-bottom: 0.35rem; }
 .lab-panel > p { color: var(--text-dim); font-size: var(--step--1); margin-bottom: var(--space-s); }
@@ -333,6 +336,8 @@
   padding: var(--space-m);
   border-radius: var(--radius-l);
   border: 1px solid var(--line);
+  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 70%, var(--bg));
 }
 .lab-live {
   position: relative;
@@ -433,6 +438,7 @@
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-s);
+  background: var(--surface-2);
   font-size: var(--step--1);
 }
 .contrast-pair {
@@ -468,6 +474,7 @@
   padding: var(--space-s) var(--space-m);
   border: 1px solid var(--line);
   border-radius: var(--radius-m);
+  background: var(--surface);
   transition: border-color var(--dur-fast), transform var(--dur) var(--ease-out);
 }
 .shelf-row:hover { border-color: color-mix(in srgb, var(--c1) 45%, var(--line)); transform: translateX(3px); }
@@ -500,11 +507,11 @@
   backdrop-filter: blur(6px);
 }
 .values-grid { display: grid; gap: var(--space-s); }
-/* 以下卡片的实色底都已去掉：表面由 glass.css 的液态玻璃层提供 */
 .value-card {
   padding: var(--space-m);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
+  background: var(--surface);
   transition: transform var(--dur) var(--ease-out), border-color var(--dur-fast);
 }
 .value-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c1) 40%, var(--line)); }

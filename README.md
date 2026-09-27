@@ -144,5 +144,14 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
 - 动效分三档：完整 / 轻量 / 关闭；系统 `prefers-reduced-motion: reduce` 时默认降级为「轻量」，用户仍可手动选「完整」。
 - 只动 `transform` 与 `opacity`；滚动读写统一在 `requestAnimationFrame` 内完成；标签页隐藏时停掉 canvas 循环。
 - 键盘可达：跳转到正文的 skip link、命令面板方向键导航、`dialog` 原生焦点管理。
-- 卡片表面统一走 `glass.css` 的液态玻璃层（`backdrop-filter`）：不支持虚化、系统开了「减少透明度」
-  （`prefers-reduced-transparency: reduce`）或动效关闭时，自动换成更实的底色，正文对比度不靠玻璃撑。
+- 卡片表面统一走 `glass.css` 的液态玻璃层，按内核能力逐级降级，任何一级卡片都留着底色：
+
+  1. 认不出 `:is()` 的老内核（老 Android WebView、Safari 13 一类）：本文件整条失效，
+     卡片用 `components.css` / `views.css` 里那层实色底 —— 也就是改造前的样子；
+  2. 没有 `color-mix()` 的内核（Chrome < 111 / Safari < 16.2 / Firefox < 113）：同上，实色底；
+  3. 有 `color-mix()` 但没有 `backdrop-filter`（Chrome 76–110 / Safari < 16.2 / Firefox 103–112）：
+     换成 84% 的半透明底，看得见背后一点点色，但不虚化；
+  4. 两者都有（Chrome 111+ / Safari 16.2+ / Firefox 113+）：完整玻璃（62% 底色 + 16px 虚化）。
+
+  另外系统「减少透明度」（`prefers-reduced-transparency: reduce`）与设置里的「动效强度：关闭」
+  会把玻璃换回厚底并停掉虚化（后者氛围光已停，玻璃背后本来也只剩纯色）。

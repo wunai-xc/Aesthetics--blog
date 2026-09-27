@@ -4,51 +4,59 @@
    全站所有「卡片」共用同一层玻璃：半透明底色 + 背景虚化 + 顶边一道高光描边。
    参数在 tokens.css 的「液态玻璃」一段（--glass-*），要整体调通透度只改那里。
 
-   为什么玻璃直接画在卡片本体上，而不是某个伪元素上：
+   兼容策略：按内核能力逐级增强，任何一级都不会把卡片变成「没有底色的透明块」。
+   （对应下面代码块里的 1) / 2) / 3)）
+   0) 认不出 :is()，或没有 color-mix() 的内核（老 Android WebView、Safari 13 / 16.1、
+      Chrome < 111、Firefox < 113）：本文件的规则被丢掉或被 @supports 挡在门外，
+      卡片用 components.css / views.css 里写着的那层实色底 —— 也就是改造前的样子；
+   1) 有 color-mix()（Chrome 111+ / Safari 16.2+ / Firefox 113+）：换成半透明玻璃底；
+      此时如果还不能虚化，就用厚一档的底色（84%），保证正文可读；
+   2) 另有 backdrop-filter（Chrome 76+ / Firefox 103+ / Safari 走 -webkit- 前缀）：完整玻璃；
+   3) 系统开了「减少透明度」或用户把动效关掉：回到厚底并停掉虚化。
+   结果是：用得上玻璃的内核看到玻璃，用不上的内核看到改造前的实色卡片。
+
+   为什么玻璃直接画在卡片本体上（而不是 ::before + z-index: -1）：
    - 卡片自己的 background 不参与自己的 backdrop，底色不会被虚化两次；
-   - 卡片里的正文、封面、按钮永远清晰（虚化只作用于卡片背后的东西）；
+   - 卡片里的正文、封面、按钮始终清晰；
    - 卡片嵌卡片（实验室面板里的对比度行、设置面板里的配色卡）与顶层 <dialog>
-     都能各虚化各的——伪元素 + z-index: -1 那种写法在这些场景里会被裁掉或错位。
-
-   本文件在 index.html / 404.html 里最后加载：卡片底色由这里接管，
-   所以 components.css / views.css 里的卡片已经不再写 background。
+     都能各虚化各的——伪元素那种写法在这些场景里会被裁掉或错位。
    ========================================================================== */
 
-/* 玻璃面本身 ------------------------------------------------------------- */
-:is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card,
-    .lab-panel, .lab-current, .contrast-row, .hero-figure, .dialog) {
-  isolation: isolate;                    /* 卡片自己的层叠关系关在内部 */
-  background: var(--glass-layer, var(--glass-surface));
-  border-color: var(--glass-edge);       /* 四边：淡淡的轮廓 */
-  border-top-color: var(--glass-rim);    /* 顶边亮一道 = 玻璃的厚度 */
-  box-shadow: var(--glass-shadow);       /* 浮起来一点点 */
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
+/* 1) 支持 color-mix()：换成半透明玻璃底（先厚一档，等下面确认能虚化再变通透） */
+@supports (background: color-mix(in srgb, red 50%, transparent)) {
+  :is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card,
+      .lab-panel, .lab-current, .contrast-row, .hero-figure, .dialog) {
+    isolation: isolate;                  /* 卡片自己的层叠关系关在内部 */
+    background: var(--glass-surface-strong);
+    border-color: var(--glass-edge);     /* 四边：淡淡的轮廓 */
+    border-top-color: var(--glass-rim);  /* 顶边亮一道 = 玻璃的厚度 */
+    box-shadow: var(--glass-shadow);     /* 浮起来一点点 */
+  }
+
+  /* 悬停时玻璃更亮一档：高光加强、底色换成第二层表面色 */
+  :is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card, .hero-figure):hover {
+    background: var(--glass-surface-2);
+  }
+
+  /* 命令面板 / 设置面板：投影更重，面板里的字更要读得清 */
+  .dialog { box-shadow: var(--shadow); }
 }
 
-/* 悬停时玻璃更亮一档：高光加强、底色换成第二层表面色 */
-:is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card, .hero-figure):hover {
-  background: var(--glass-surface-2);
-}
-
-/* 命令面板 / 设置面板：同一层玻璃，但更厚、投影更重，保证面板里的字读得清 */
-.dialog {
-  --glass-layer: var(--glass-surface-strong);
-  box-shadow: var(--shadow);
-}
-
-/* ==========================================================================
-   降级：不支持虚化、系统要求减少透明、或用户关掉动效（此时氛围光已停，
-   玻璃背后只剩一片纯色，虚化没有意义）——三种情况都改用更实的底色，
-   卡片的可读性不靠玻璃撑。
-   ========================================================================== */
-@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
-  :root {
-    --glass-tint: var(--glass-tint-strong);
-    --glass-tint-2: var(--glass-tint-strong);
+/* 2) 还能虚化：底色变通透，并打开 backdrop-filter（-webkit- 供旧 Safari） */
+@supports (background: color-mix(in srgb, red 50%, transparent)) and
+          ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  :is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card,
+      .lab-panel, .lab-current, .contrast-row, .hero-figure, .dialog) {
+    background: var(--glass-surface);
+    -webkit-backdrop-filter: var(--glass-filter);
+    backdrop-filter: var(--glass-filter);
   }
 }
 
+/* ==========================================================================
+   3) 用户侧的两个开关：把 --glass-* 令牌改回厚底并停掉虚化。
+   （这两条只改写令牌，上面对应的规则会自动跟着变）
+   ========================================================================== */
 @media (prefers-reduced-transparency: reduce) {
   :root {
     --glass-tint: var(--glass-tint-strong);
