@@ -297,6 +297,23 @@
   gap: 0.5rem;
   margin-top: var(--space-s);
 }
+
+/* 上次阅读位置（只记在本地，不自动跳转） ------------------------------- */
+.post-resume {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: var(--space-s);
+  padding: 0.5rem 0.7rem 0.5rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
 .related-grid { display: grid; gap: var(--space-m); grid-template-columns: 1fr; margin-top: var(--space-m); }
 
 /* 色彩实验室 ------------------------------------------------------------- */
@@ -407,6 +424,59 @@
   transition: transform var(--dur) var(--ease-spring);
 }
 .harmony-row button:hover { transform: translateY(-5px) scale(1.03); }
+
+/* 对比度检查（WCAG 相对亮度，实算不是示意） ----------------------------- */
+.lab-panel-wide { grid-column: 1 / -1; }
+.contrast-list { display: grid; gap: 0.5rem; }
+.contrast-row {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  background: var(--surface-2);
+  font-size: var(--step--1);
+}
+.contrast-pair {
+  display: grid;
+  place-items: center;
+  height: 2.1rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+.contrast-label { color: var(--text-dim); }
+.contrast-value { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.04em; }
+.contrast-badge {
+  padding: 0.1em 0.55em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.contrast-badge.is-aaa { color: var(--on-c1); background: var(--c1); border-color: transparent; }
+.contrast-badge.is-pass { color: var(--on-c2); background: var(--c2); border-color: transparent; }
+.contrast-badge.is-big { color: var(--text); border-color: var(--line-strong); }
+.contrast-badge.is-fail { color: var(--on-c3); background: var(--c3); border-color: transparent; }
+
+/* 本地书架 --------------------------------------------------------------- */
+.shelf-progress { display: grid; gap: var(--space-2xs); }
+.shelf-row {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-s) var(--space-m);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  transition: border-color var(--dur-fast), transform var(--dur) var(--ease-out);
+}
+.shelf-row:hover { border-color: color-mix(in srgb, var(--c1) 45%, var(--line)); transform: translateX(3px); }
+.shelf-title { font-family: var(--font-display); font-size: var(--step-1); }
 
 /* 关于页 ----------------------------------------------------------------- */
 .about-head { padding-block: clamp(2.5rem, 8vw, 5rem) var(--space-m); }

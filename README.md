@@ -31,13 +31,13 @@ assets/css/tokens.css      设计变量 + 八套配色（[data-palette="..."]）
 assets/css/base.css        重置、正文排版、颗粒/氛围光/光标/代码块
 assets/css/layout.css      站点骨架：页头、导航、移动菜单、页脚
 assets/css/components.css  按钮、卡片、跑马灯、弹层、提示、加载动画
-assets/css/views.css       六个视图各自的版式
+assets/css/views.css       各视图版式（归档、文章、实验室、书架、隐私页）
 assets/css/animations.css  关键帧、滚动揭示、路由过渡、动效降级
 assets/js/data.js          站点信息、配色表、命令表、文章正文（唯一的数据源）
 assets/js/store.js         localStorage 偏好、配色切换、收藏/点赞/阅读进度
-assets/js/fx.js            交互引擎：canvas、光标、揭示、3D 倾斜、彩纸、目录
-assets/js/views.js         六个视图：home / archive / post / lab / about / 404
-assets/js/router.js        Hash 路由 + 三色遮罩过渡
+assets/js/fx.js            交互引擎：canvas、光标、揭示、3D 倾斜、彩纸、目录、小节链接
+assets/js/views.js         八个视图：home / archive / post / lab / about / saved / privacy / 404
+assets/js/router.js        Hash 路由 + 三色遮罩过渡（切换前清掉旧视图的监听）
 assets/js/app.js           引导层：加载动画、配色面板、设置、命令面板、快捷键
 feed.xml                   手写的 RSS（Hash 路由链接，域名变更时全局替换前缀）
 404.html                   服务器级 404（Cloudflare Pages 用它渲染未知路径，不加载 JS）
@@ -52,9 +52,14 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
 | `#/` | 首页 |
 | `#/archive`、`#/archive?tag=色彩` | 归档（标签过滤、关键词搜索、卡片/紧凑视图） |
 | `#/post/<slug>` | 文章 |
+| `#/post/<slug>?s=sec-2` | 文章，并定位到第 2 个小节（由标题旁的 `#` 按钮复制而来） |
 | `#/lab` | 色彩实验室 |
 | `#/about` | 关于 |
+| `#/saved` | 本地书架（收藏 · 点赞 · 在读进度） |
+| `#/privacy` | 隐私与数据（列出本机此刻真实存着的值） |
 | 其他 | 404 |
+
+`#sec-2` 这类页内锚点不算路由：文章页的目录点击后交给浏览器滚动，不会把视图重新渲染一遍。
 
 ## 快捷键
 
@@ -69,6 +74,18 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
 | `Esc` | 关闭弹层 / 移动菜单 |
 
 隐藏彩蛋：`↑ ↑ ↓ ↓ ← → ← → B A`。
+
+## 本地数据、阅读进度与书架
+
+全部都写在 `localStorage` 的 `aesthetics:prefs:v1` 这一个键里，没有账号也没有同步：
+
+- **阅读进度**：文章页滚动时按比例写入（低于 5% 不记，避免刚点开就显示「已读」），卡片与归档里的进度条读的就是它。
+- **回到上次位置**：正文顶部会出现「上次读到 x%」加两个按钮（跳回 / 从头开始），但**不自动跳转**——自动跳会打断刚打开页面的人。
+- **本地书架** `#/saved`：汇总收藏、点赞与在读进度，底部可分别清空这三类记录。
+- **对比度检查**：色彩实验室底部按 WCAG 相对亮度公式实算 6 组前景/背景的比值（AAA / AA / 仅大字 / 不达标），跟着滑杆与配色实时变化。
+- **隐私与数据** `#/privacy`：把本机此刻真实存着的值列成表，并写明站点不做什么。
+
+凡是在浏览器开发者工具里能看到的与这一页不一致的，都算这里写错了。
 
 ## 加一篇文章
 

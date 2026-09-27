@@ -34,9 +34,11 @@
     switch (route.name) {
       case 'home': return AB.views.home();
       case 'archive': return AB.views.archive(route.query);
-      case 'post': return AB.views.post(decodeURIComponent(route.param || ''));
+      case 'post': return AB.views.post(decodeURIComponent(route.param || ''), route.query);
       case 'lab': return AB.views.lab();
       case 'about': return AB.views.about();
+      case 'saved': return AB.views.saved();
+      case 'privacy': return AB.views.privacy();
       default: return AB.views.notfound();
     }
   }
@@ -53,6 +55,9 @@
 
   function paint(route, view) {
     viewEl.innerHTML = view.html;
+    /* 旧视图的监听在这里、恰好在新视图 mount 之前清掉：
+       顺序反过来会把 mount() 里刚注册的监听一起移除。 */
+    AB.fx.clearScope();
     if (typeof view.mount === 'function') view.mount(viewEl);
     AB.fx.scope(viewEl);
     document.title = view.title || AB.SITE.name;
@@ -111,7 +116,13 @@
 
   function handleHash(options) {
     var route = parse(window.location.hash);
-    if (!route) return;
+    if (!route) {
+      /* 页内锚点（#sec-2）：已经渲染过就交给浏览器滚动，不要重新渲染，
+         否则点击文章目录会把页面切走；首次打开（直接访问 #sec-2 这类地址）
+         才退回首页，避免用户看到一个空白页。 */
+      if (!first) return;
+      route = { name: 'home', param: '', query: new URLSearchParams('') };
+    }
     render(route, options);
   }
 

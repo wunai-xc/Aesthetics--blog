@@ -41,6 +41,8 @@ AB.COMMANDS = [
   { id: 'go-archive', title: '前往：全部文章',    sub: 'Hash 路由 #/archive', icon: '#6b5cff', run: '#/archive' },
   { id: 'go-lab',     title: '前往：色彩实验室',  sub: 'Hash 路由 #/lab',     icon: '#ff4d6d', run: '#/lab' },
   { id: 'go-about',   title: '前往：关于本站',    sub: 'Hash 路由 #/about',   icon: '#ffd166', run: '#/about' },
+  { id: 'go-saved',   title: '前往：本地书架',    sub: '收藏 · 点赞 · 在读进度', icon: '#14f1c8', run: '#/saved' },
+  { id: 'go-privacy', title: '前往：隐私与数据',  sub: '本地存了什么、不存什么', icon: '#9797a3', run: '#/privacy' },
   { id: 'act-palette', title: '动作：切换下一套配色', sub: '快捷键 P',        icon: '#14f1c8', action: 'palette' },
   { id: 'act-random',  title: '动作：随机生成一套配色', sub: '快捷键 L',      icon: '#ff2fb9', action: 'random-palette' },
   { id: 'act-confetti', title: '动作：撒一把彩纸',  sub: '快捷键 C',          icon: '#ffe14d', action: 'confetti' },

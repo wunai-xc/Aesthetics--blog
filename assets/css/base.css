@@ -212,6 +212,23 @@ hr {
   scroll-margin-top: calc(var(--header-h) + 1.5rem);
 }
 .prose h2 + p, .prose h3 + p { margin-top: var(--space-2xs); }
+
+/* 小节链接：悬停标题时出现的 # 按钮，复制 #/post/<slug>?s=sec-N */
+.prose .heading-link {
+  margin-left: 0.4em;
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out), color var(--dur-fast);
+}
+.prose h2:hover .heading-link,
+.prose h3:hover .heading-link,
+.prose .heading-link:focus-visible { opacity: 1; }
+.prose .heading-link:hover { color: var(--c1); }
+@media (hover: none) {
+  .prose .heading-link { opacity: 0.45; }
+}
 .prose a {
   color: var(--text);
   border-bottom: 1px solid var(--c1);

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   views.js — 六个视图：首页 / 归档 / 文章 / 色彩实验室 / 关于 / 404
+   views.js — 八个视图：首页 / 归档 / 文章 / 色彩实验室 / 关于 / 本地书架 / 隐私与数据 / 404
    每个视图返回 { title, html, mount(root) }
    ========================================================================== */
 (function () {
@@ -395,7 +395,7 @@
   };
 
   /* ================================================================ 文章 */
-  views.post = function (slug) {
+  views.post = function (slug, query) {
     var post = AB.findPost(slug);
     if (!post) return views.notfound();
 
@@ -409,7 +409,7 @@
     }).slice(0, 3);
 
     var html = '' +
-      '<article data-article>' +
+      '<article data-article data-post="' + post.slug + '">' +
         '<header class="post-head container">' +
           '<p class="post-breadcrumb"><a href="#/">首页</a><span aria-hidden="true">/</span><a href="#/archive">文章</a><span aria-hidden="true">/</span><span>' + esc(post.kicker) + '</span></p>' +
           '<div class="cluster" data-reveal="fade">' + tagsMarkup(post, 'flat') + '</div>' +
@@ -482,6 +482,42 @@
           }
         }
 
+        /* 从分享链接进来：定位到指定小节（#/post/<slug>?s=sec-2） */
+        if (query && query.get('s')) {
+          var section = document.getElementById(query.get('s'));
+          if (section) window.setTimeout(function () { section.scrollIntoView({ block: 'start' }); }, 80);
+        }
+
+        /* 上次读到哪：给一个跳回入口，但不自动跳——自动跳会打断刚打开页面的人 */
+        var ratio = AB.store.readRatio(post.slug);
+        var actions = AB.fx.qs('.post-actions', root);
+        if (actions && ratio >= 0.05) {
+          var resume = document.createElement('div');
+          resume.className = 'post-resume';
+          resume.innerHTML = '<span>上次读到 ' + Math.round(ratio * 100) + '%</span>' +
+            '<button class="btn btn-sm btn-outline" type="button">跳回上次位置</button>' +
+            '<button class="btn btn-sm btn-ghost" type="button">从头开始</button>';
+          actions.parentNode.insertBefore(resume, actions.nextSibling);
+
+          var jumpBtn = resume.querySelector('button');
+          var restartBtn = resume.querySelectorAll('button')[1];
+          jumpBtn.addEventListener('click', function () {
+            var article = AB.fx.qs('[data-article]', root) || root;
+            var rect = article.getBoundingClientRect();
+            var top = rect.top + window.scrollY;
+            var total = rect.height - window.innerHeight + 240;
+            window.scrollTo({
+              top: Math.max(0, top + ratio * total - 240),
+              behavior: AB.store.get('motion') === 'off' ? 'auto' : 'smooth'
+            });
+          });
+          restartBtn.addEventListener('click', function () {
+            AB.store.saveRead(post.slug, 0);
+            resume.remove();
+            AB.fx.toast('已清除这篇的阅读进度');
+          });
+        }
+
         /* 点赞 / 收藏 / 分享 */
         var likeBtn = AB.fx.qs('[data-like]', root);
         if (likeBtn) {
@@ -511,7 +547,7 @@
         }
 
         AB.fx.readingProgress(root, post.slug);
-        AB.fx.toc(root);
+        /* 目录追踪由 fx.scope() 统一负责，这里不再重复调用（会挂上第二个滚动监听） */
         if (AB.fx.setPostMode) AB.fx.setPostMode(true);
         AB.fx.pending(function () {
           if (AB.fx.setPostMode) AB.fx.setPostMode(false);
@@ -584,6 +620,12 @@
             '</div>' +
           '</div>' +
 
+          '<div class="lab-panel lab-panel-wide" data-reveal="up" data-reveal-delay="0.12">' +
+            '<h2>对比度检查</h2>' +
+            '<p>配色好不好看是一回事，能不能读是另一回事。下面按 WCAG 的相对亮度公式算真实比值：正文 4.5:1 为 AA、7:1 为 AAA，非文本图形 3:1。数值会跟着配色与上面的滑杆实时变化。</p>' +
+            '<div class="contrast-list" data-lab-contrast></div>' +
+          '</div>' +
+
         '</div>' +
       '</section>' +
 
@@ -627,6 +669,7 @@
         var scaleHost = AB.fx.qs('[data-lab-scale]', root);
         var harmonyHost = AB.fx.qs('[data-lab-harmony]', root);
         var varsHost = AB.fx.qs('[data-lab-vars]', root);
+        var contrastHost = AB.fx.qs('[data-lab-contrast]', root);
         var sliders = {
           h: AB.fx.qs('[data-lab="h"]', root),
           s: AB.fx.qs('[data-lab="s"]', root),
@@ -685,6 +728,61 @@
           }).join('');
         }
 
+        /* ---- 对比度检查（WCAG 相对亮度） ---- */
+        function parseRgb(value) {
+          var parts = AB.fx.toRgb(value, 1).match(/[\d.]+/g);
+          return parts && parts.length >= 3 ? [parseFloat(parts[0]), parseFloat(parts[1]), parseFloat(parts[2])] : null;
+        }
+        function luminance(rgb) {
+          var c = rgb.map(function (v) {
+            v = v / 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+          });
+          return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+        }
+        function contrastRatio(fg, bg) {
+          var l1 = luminance(fg);
+          var l2 = luminance(bg);
+          var hi = Math.max(l1, l2);
+          var lo = Math.min(l1, l2);
+          return (hi + 0.05) / (lo + 0.05);
+        }
+        function contrastBadge(value) {
+          if (value >= 7) return '<span class="contrast-badge is-aaa">AAA</span>';
+          if (value >= 4.5) return '<span class="contrast-badge is-pass">AA</span>';
+          if (value >= 3) return '<span class="contrast-badge is-big">仅大字 / 图形</span>';
+          return '<span class="contrast-badge is-fail">不达标</span>';
+        }
+        function renderContrast() {
+          if (!contrastHost) return;
+          var cs = getComputedStyle(document.documentElement);
+          var pick = function (name, fallback) {
+            var v = (cs.getPropertyValue(name) || '').trim();
+            return v || fallback;
+          };
+          var c = current();
+          var labHex = hex(c.h, c.s, c.l);
+          var pairs = [
+            { label: '正文 / 地色', fg: pick('--text', '#ffffff'), bg: pick('--bg', '#07070a') },
+            { label: '次级正文 / 地色', fg: pick('--text-dim', '#9797a3'), bg: pick('--bg', '#07070a') },
+            { label: '主色 / 地色', fg: pick('--c1', '#c8ff2f'), bg: pick('--bg', '#07070a') },
+            { label: '主色上的字 / 主色', fg: pick('--on-c1', '#10140a'), bg: pick('--c1', '#c8ff2f') },
+            { label: '实时色块上的白字', fg: '#ffffff', bg: labHex },
+            { label: '实时色块上的黑字', fg: '#000000', bg: labHex }
+          ];
+          contrastHost.innerHTML = pairs.map(function (pair) {
+            var fg = parseRgb(pair.fg);
+            var bg = parseRgb(pair.bg);
+            var value = (fg && bg) ? contrastRatio(fg, bg) : 0;
+            return '<div class="contrast-row">' +
+              '<span class="contrast-pair" style="background:' + pair.bg + ';color:' + pair.fg + '">Aa</span>' +
+              '<span class="contrast-label">' + esc(pair.label) + '</span>' +
+              '<span class="contrast-value">' + value.toFixed(2) + ':1</span>' +
+              contrastBadge(value) +
+            '</div>';
+          }).join('');
+        }
+
         function render() {
           var c = current();
           lab.h = c.h; lab.s = c.s; lab.l = c.l;
@@ -698,6 +796,7 @@
           renderScale();
           renderHarmony();
           renderVars();
+          renderContrast();
         }
 
         Object.keys(sliders).forEach(function (key) {
@@ -778,6 +877,10 @@
 
         bindPalettes(root);
         render();
+
+        /* 换配色后对比度会变，跟着重算（离开实验室时移除监听） */
+        window.addEventListener('ab:prefs', renderContrast);
+        AB.fx.pending(function () { window.removeEventListener('ab:prefs', renderContrast); });
       }
     };
   };
@@ -871,6 +974,166 @@
 
     return {
       title: '关于 — ' + AB.SITE.name,
+      html: html,
+      mount: function () {}
+    };
+  };
+
+  /* ============================================================ 本地书架 */
+  views.saved = function () {
+    var saved = (AB.store.get('saved') || []).map(function (slug) { return AB.findPost(slug); }).filter(Boolean);
+    var liked = (AB.store.get('likes') || []).map(function (slug) { return AB.findPost(slug); }).filter(Boolean);
+    var reading = AB.sortedPosts.filter(function (p) {
+      var r = AB.store.readRatio(p.slug);
+      return r >= 0.05 && r < 0.95;
+    });
+    var empty = !saved.length && !liked.length && !reading.length;
+
+    function grid(list) {
+      return '<div class="post-grid" data-stagger>' + list.map(function (post, i) {
+        return postCard(post, { wide: true, index: i, read: true, delay: (Math.min(i, 5) * 0.05).toFixed(2) });
+      }).join('') + '</div>';
+    }
+
+    var html = '' +
+      '<section class="archive-head container">' +
+        '<p class="eyebrow" data-reveal="fade">Local Shelf</p>' +
+        '<h1 class="archive-title" data-reveal="up">本地书架 <span class="thin text-dim">' + (saved.length + liked.length + reading.length) + ' 条记录</span></h1>' +
+        '<p class="lede" data-reveal="up" data-reveal-delay="0.08">收藏、点赞与阅读进度只存在这台设备的 localStorage 里：没有账号、没有同步、不会上传。换设备或清空浏览器数据后就会消失。</p>' +
+      '</section>' +
+
+      '<section class="container section-tight">' +
+        '<div class="cluster" style="gap:var(--space-l)" data-reveal="up">' +
+          '<div class="stat"><span class="stat-value">' + saved.length + '</span><span class="stat-label">篇收藏</span></div>' +
+          '<div class="stat"><span class="stat-value">' + liked.length + '</span><span class="stat-label">篇点赞</span></div>' +
+          '<div class="stat"><span class="stat-value">' + reading.length + '</span><span class="stat-label">篇在读</span></div>' +
+        '</div>' +
+      '</section>' +
+
+      (empty
+        ? '<section class="container"><div class="archive-empty"><p>书架还是空的。</p><p class="form-note">在文章页点「收藏」或「点赞」，滚动过的文章会自动记下进度，然后回到这里。</p><div class="cluster" style="justify-content:center"><a class="btn btn-primary" href="#/archive">去看文章<span class="btn-arrow">→</span></a></div></div></section>'
+        : '') +
+
+      (reading.length
+        ? '<section class="section-tight container">' +
+            '<div class="section-head" data-reveal="up"><p class="eyebrow">在读</p><h2>继续阅读<span class="thin">，进度记在你本地</span></h2></div>' +
+            '<div class="shelf-progress">' + reading.map(function (post) {
+              var pct = Math.round(AB.store.readRatio(post.slug) * 100);
+              return '<a class="shelf-row" href="#/post/' + post.slug + '" data-reveal="up">' +
+                '<span class="shelf-title">' + esc(post.title) + '</span>' +
+                '<div class="meter"><div class="meter-top"><b>' + esc(post.kicker) + '</b><span>' + pct + '%</span></div>' +
+                '<div class="meter-track"><span class="meter-fill" data-value="' + pct + '" style="background:var(--c1)"></span></div></div>' +
+              '</a>';
+            }).join('') + '</div>' +
+          '</section>'
+        : '') +
+
+      (saved.length
+        ? '<section class="section-tight container"><div class="section-head" data-reveal="up"><p class="eyebrow">收藏</p><h2>标记过的 ' + saved.length + ' 篇</h2></div>' + grid(saved) + '</section>'
+        : '') +
+
+      (liked.length
+        ? '<section class="section-tight container"><div class="section-head" data-reveal="up"><p class="eyebrow">点赞</p><h2>点过赞的 ' + liked.length + ' 篇</h2></div>' + grid(liked) + '</section>'
+        : '') +
+
+      '<section class="section container">' +
+        '<div class="rail">' +
+          '<div class="stack" data-reveal="up">' +
+            '<p class="eyebrow">管理</p>' +
+            '<h2>清空本地记录</h2>' +
+            '<p class="text-dim">这是全站唯一写进你这台设备的数据。清空只影响当前浏览器，线上内容不受影响，也无法撤销。</p>' +
+          '</div>' +
+          '<div class="cluster" data-reveal="up" data-reveal-delay="0.08">' +
+            '<button class="btn btn-outline" type="button" data-shelf-clear="saved">清空收藏</button>' +
+            '<button class="btn btn-outline" type="button" data-shelf-clear="likes">清空点赞</button>' +
+            '<button class="btn btn-outline" type="button" data-shelf-clear="reads">清空阅读进度</button>' +
+            '<a class="btn btn-ghost" href="#/privacy">本地到底存了什么<span class="btn-arrow">→</span></a>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+
+    return {
+      title: '本地书架 — ' + AB.SITE.name,
+      html: html,
+      mount: function (root) {
+        AB.fx.qsa('[data-shelf-clear]', root).forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var key = btn.getAttribute('data-shelf-clear');
+            var labels = { saved: '收藏', likes: '点赞', reads: '阅读进度' };
+            if (!window.confirm('清空本地的「' + labels[key] + '」？无法撤销。')) return;
+            if (key === 'reads') AB.store.prefs.reads = {};
+            else AB.store.prefs[key] = [];
+            AB.store.apply('shelf');
+            AB.fx.toast('已清空本地的' + labels[key]);
+            AB.router.go('#/saved');
+          });
+        });
+      }
+    };
+  };
+
+  /* ========================================================== 隐私与数据 */
+  views.privacy = function () {
+    var prefs = AB.store.prefs;
+    var rows = [
+      ['配色（含随机生成的配色）', 'palette / customVars', prefs.palette === 'custom' ? '自定义 · 19 个 CSS 变量' : prefs.palette],
+      ['动效强度', 'motion', prefs.motion],
+      ['光标 / 颗粒 / 氛围光 / 跑马灯', 'cursor / grain / aurora / marquee', [prefs.cursor, prefs.grain, prefs.aurora, prefs.marquee].join(' · ')],
+      ['正文字号', 'fontScale', String(prefs.fontScale)],
+      ['收藏', 'saved', (prefs.saved || []).length + ' 篇'],
+      ['点赞', 'likes', (prefs.likes || []).length + ' 篇'],
+      ['阅读进度', 'reads', Object.keys(prefs.reads || {}).length + ' 篇'],
+      ['访问次数', 'visits', String(prefs.visits || 0) + ' 次']
+    ];
+
+    var html = '' +
+      '<section class="archive-head container">' +
+        '<p class="eyebrow" data-reveal="fade">Privacy</p>' +
+        '<h1 class="archive-title" data-reveal="up">隐私与数据</h1>' +
+        '<p class="lede" data-reveal="up" data-reveal-delay="0.08">这一页写的都是可以自己验证的事实：下面列出的是你这台设备现在实际存着的值，以及本站不做什么。</p>' +
+      '</section>' +
+
+      '<section class="section container">' +
+        '<div class="prose">' +
+          '<h2>站点不做什么</h2>' +
+          '<ul>' +
+            '<li>没有账号、没有登录、没有服务端——整站是静态文件，没有后端可以接收数据。</li>' +
+            '<li>不写 Cookie，不用 localStorage 之外的任何存储（没有 IndexedDB、没有缓存投毒式的 Service Worker）。</li>' +
+            '<li>仓库里的代码不发起任何网络请求：字体、图标、封面全部本地或实时算出来，没有 CDN、没有第三方 SDK。</li>' +
+            '<li>不埋点：没有统计脚本、没有像素、没有 A/B 分流。</li>' +
+          '</ul>' +
+
+          '<h2>本地存了什么（当前值）</h2>' +
+          '<p>全部写在 localStorage 的一个键里：<code>aesthetics:prefs:v1</code>。下面是此刻的真实取值，不是示意。</p>' +
+          '<table><thead><tr><th>内容</th><th>字段</th><th>当前值</th></tr></thead><tbody>' +
+            rows.map(function (row) {
+              return '<tr><td>' + esc(row[0]) + '</td><td><code>' + esc(row[1]) + '</code></td><td>' + esc(row[2]) + '</td></tr>';
+            }).join('') +
+          '</tbody></table>' +
+
+          '<h2>怎么清掉</h2>' +
+          '<ul>' +
+            '<li>分类清空：<a href="#/saved">本地书架</a> 页底部可分别清空收藏 / 点赞 / 阅读进度。</li>' +
+            '<li>全部恢复默认：显示设置面板里的「恢复默认」（保留访问次数）。</li>' +
+            '<li>彻底清除：浏览器设置里删除本站的站点数据，键会随站点一起消失。</li>' +
+          '</ul>' +
+
+          '<h2>一件必须说明的事：托管平台的统计</h2>' +
+          '<p>本站部署在 Cloudflare Pages。部署后，Cloudflare 会往页面注入它自己的 Web Analytics 脚本（<code>static.cloudflareinsights.com/beacon.min.js</code>），这个脚本<strong>不在本仓库里</strong>，也不是本站代码调用的。按其官方说明，它不使用 Cookie、不做跨站追踪；它统计的是页面访问情况，数据由 Cloudflare 处理。</p>' +
+          '<p>如果你不希望它存在，可在 Cloudflare 控制台的 Web Analytics 里关掉——关掉之后，这个站就真的是零外部请求了。</p>' +
+
+          '<h2>RSS 与分享</h2>' +
+          '<ul>' +
+            '<li><a href="feed.xml">feed.xml</a> 是静态文件，用阅读器订阅不经过任何第三方服务，本站也无法知道谁订阅了。</li>' +
+            '<li>「复制链接」走浏览器的剪贴板 API，不经过服务器；在支持的设备上会调用系统分享面板。</li>' +
+          '</ul>' +
+          '<hr>' +
+          '<p>以上任何一条如果与你在浏览器开发者工具里看到的不一致，那就是这里有错——<a href="mailto:' + esc(AB.SITE.email) + '">告诉我</a>。</p>' +
+        '</div>' +
+      '</section>';
+
+    return {
+      title: '隐私与数据 — ' + AB.SITE.name,
       html: html,
       mount: function () {}
     };

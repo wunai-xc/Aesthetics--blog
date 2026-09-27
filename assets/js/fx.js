@@ -851,9 +851,33 @@
     });
   };
 
+  /* ---------------------------------------------------- 小节链接 */
+  fx.anchorLinks = function (root) {
+    var article = fx.qs('[data-article]', root);
+    if (!article) return;
+    var slug = article.getAttribute('data-post') || '';
+    fx.qsa('h2[id], h3[id]', article).forEach(function (heading) {
+      if (heading.querySelector('.heading-link')) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'heading-link';
+      btn.textContent = '#';
+      btn.setAttribute('aria-label', '复制这一节的链接');
+      btn.addEventListener('click', function () {
+        /* 用 href 去掉 hash，file:// 下 origin 会是 "null"，拼 origin 会得到坏地址 */
+        var base = window.location.href.split('#')[0];
+        var url = base + '#/post/' + slug + '?s=' + heading.id;
+        fx.copy(url, function () { fx.toast('已复制这一节的链接'); });
+      });
+      heading.appendChild(btn);
+    });
+  };
+
   /* ---------------------------------------------------- 视图初始化总入口 */
+  /* 注意：清理上一个视图的监听由 router 在挂载新视图之前调用 fx.clearScope() 完成，
+     不能放在这里——mount() 先于 scope() 运行，若此处清空，mount 里注册的监听
+     （阅读进度、目录追踪、post 模式）会刚注册就被移除。 */
   fx.scope = function (root) {
-    fx.clearScope();
     fx.reveal(root);
     fx.tilt(root);
     fx.magnetic(root);
@@ -863,6 +887,7 @@
     fx.typewriter(root);
     fx.highlight(root);
     fx.codeBlocks(root);
+    fx.anchorLinks(root);
     fx.toc(root);
     fx.coverShift(root);
     fx.share(root);
