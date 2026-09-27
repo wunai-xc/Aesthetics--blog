@@ -103,9 +103,16 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
   excerpt: '列表页摘要。',
   featured: 0,                  // 1/2/3 会进首页「先读这三篇」
   cover: ['#c8ff2f', '#6b5cff', '#ff4d6d'],
+  image: '',                    // 可选：封面图，不写就展示渐变
   body: `...HTML 片段...`       // 支持 h2/h3 自动生成右侧目录
 }
 ```
+
+**封面二选一**（`assets/js/views.js` 的 `coverMarkup()`）：写了 `image` 就用图，
+`cover` 与纹样层让位，只压一层蒙版保住角标；不写 `image` 就用渐变色——
+`cover` 里那三个色相，或者干脆不写 `cover`，退回当前配色的主色 / 副色 / 刺激色
+（也就是「任意渐变色」，还跟着换配色一起变）。首页展示卡的颜色也从这三个色相里取：
+`--glow-a` / `--glow-b` 用的是 `cover` 的首尾两色。
 
 代码块用 `<pre class="code-block" data-lang="js|css|html|sh"><code>…</code></pre>`：
 `fx.highlight()` 会按 `data-lang` 自动着色（从 `textContent` 重新着色，可重复调用），
@@ -157,3 +164,10 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
 
   另外系统「减少透明度」（`prefers-reduced-transparency: reduce`）与设置里的「动效强度：关闭」
   会把玻璃换回厚底并停掉虚化（后者氛围光已停，玻璃背后本来也只剩纯色）。
+
+- 首页展示卡（`.card-glow`，见 `components.css`）另有一层「斜切光板」：外层壳的
+  `::before` / `::after` 铺文章封面的首尾两色，默认 `skewX(15deg)` 从卡片上边与下边探出一角，
+  第二片 `blur(30px)` 散成光晕；悬停时两片摆正铺满卡片，成为一圈霓虹描边，
+  同时两个小玻璃方块（`.card-spark`）从左上与右下浮出并持续呼吸。光板必须画在
+  卡片外面的壳上——伪元素永远在元素自己的背景之上，画在卡片上就会盖住文字。
+  「动效强度：关闭」与 `prefers-reduced-motion` 下呼吸停止、过渡归零，只留悬停后的那一下变化。

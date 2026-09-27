@@ -137,6 +137,12 @@
   to   { opacity: 1; transform: none; }
 }
 
+/* 首页霓虹卡的两个小玻璃方块：上下呼吸（参考样式的 animate 关键帧） */
+@keyframes card-spark-float {
+  0%, 100% { transform: translateY(10px); }
+  50%      { transform: translateY(-10px); }
+}
+
 /* 滚动揭示系统 ----------------------------------------------------------- */
 [data-reveal] {
   --reveal-shift: 26px;
@@ -230,6 +236,9 @@ html[data-motion="off"] .view-leave { animation: none; }
 html[data-motion="off"] .aura,
 html[data-motion="off"] .orbit { display: none; }
 html[data-motion="off"] .cursor { display: none; }
+/* 首页霓虹卡的小方块不再呼吸，悬停后只是浮出来停住 */
+html[data-motion="off"] .card-spark::before,
+html[data-motion="off"] .card-spark::after { animation: none; }
 html[data-motion="off"] *,
 html[data-motion="off"] *::before,
 html[data-motion="off"] *::after {

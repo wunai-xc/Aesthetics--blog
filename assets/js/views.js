@@ -23,11 +23,31 @@
     }).join('');
   }
 
+  /* 封面渐变色：优先取文章自己的三色（post.cover），没写就用当前配色的三色。
+     没有图的文章靠它撑场面，所以换配色时封面也跟着整站一起换。 */
+  function coverGradient(post, angle) {
+    var c = Array.isArray(post.cover) ? post.cover : [];
+    if (!c.length) {
+      return 'linear-gradient(' + angle + 'deg, var(--c1) 0%, var(--c2) 54%, var(--c3) 100%)';
+    }
+    return 'linear-gradient(' + angle + 'deg,' + c[0] + ' 0%,' + c[1] + ' 54%,' + c[2] + ' 100%)';
+  }
+
+  /* 封面：文章有图（post.image）时展示图片，没有图时展示渐变色。
+     两条路都落在卡片背景（.card-media）上；有图时跳过纹样层，只压一层蒙版保证角标与文字读得清。 */
   function coverMarkup(post, index) {
-    var c = post.cover || ['#c8ff2f', '#6b5cff', '#ff4d6d'];
-    var gradient = 'linear-gradient(' + (105 + (index || 0) * 14) + 'deg,' + c[0] + ' 0%,' + c[1] + ' 54%,' + c[2] + ' 100%)';
-    return '<span class="cover-art" data-cover-hue style="--cover:' + gradient + '"></span>' +
+    if (post.image) {
+      return '<span class="cover-art cover-art-image" style="background-image:url(\'' + esc(post.image) + '\')"></span>' +
+             '<span class="cover-scrim"></span>';
+    }
+    return '<span class="cover-art" data-cover-hue style="--cover:' + coverGradient(post, 105 + (index || 0) * 14) + '"></span>' +
            '<span class="cover-grid"></span><span class="cover-stripes"></span>';
+  }
+
+  /* 首页霓虹卡的光板颜色：跟着文章封面首尾两色走；没写 cover 的文章退回主色与刺激色 */
+  function glowVars(post) {
+    var c = Array.isArray(post.cover) ? post.cover : [];
+    return '--glow-a:' + (c[0] || 'var(--c1)') + ';--glow-b:' + (c[2] || 'var(--c3)') + ';';
   }
 
   function tagsMarkup(post, variant) {
@@ -53,11 +73,14 @@
     var readFlag = ratio >= 0.05
       ? '<span class="read-flag"><i aria-hidden="true"></i>' + (pct >= 97 ? '已读完' : '已读 ' + pct + '%') + '</span>'
       : '';
-    return '' +
-      '<article class="' + cls + '" data-tilt data-tilt-depth="' + (o.feature ? 3 : 5) + '" data-reveal="up" data-reveal-delay="' + (o.delay || 0) + '">' +
+    var reveal = 'data-reveal="up" data-reveal-delay="' + (o.delay || 0) + '"';
+    /* 有图时给 .card-media 加一个 has-image：角标要换成实色 + 投影，压在照片上才看得见 */
+    var mediaCls = 'card-media' + (post.image ? ' has-image' : '');
+    var card = '' +
+      '<article class="' + cls + '" data-tilt data-tilt-depth="' + (o.feature ? 3 : 5) + '"' + (o.glow ? '' : ' ' + reveal) + '>' +
         '<a class="card-link" href="/post/' + post.slug + '" aria-label="阅读：' + esc(post.title) + '"></a>' +
         readMark +
-        '<div class="card-media">' + coverMarkup(post, index) + '<span class="card-media-num">' + num + '</span></div>' +
+        '<div class="' + mediaCls + '">' + coverMarkup(post, index) + '<span class="card-media-num">' + num + '</span></div>' +
         '<div class="card-body">' +
           '<div class="card-meta">' + tagsMarkup(post, 'flat') + '</div>' +
           '<h3 class="card-title">' + esc(post.title) + '</h3>' +
@@ -65,6 +88,15 @@
           '<div class="card-meta"><span>' + dateLabel(post.date) + '</span><span class="dot">/</span><span>' + post.minutes + ' 分钟</span>' + readFlag + '</div>' +
         '</div>' +
       '</article>';
+
+    if (!o.glow) return card;
+    /* 霓虹玻璃卡（首页展示卡）：光板必须画在卡片身后，所以外面再套一层壳，
+       ::before / ::after 画在壳上、卡片自己抬到 z-index 1 —— 见 components.css 的 .card-glow。
+       揭示动画也搬到了壳上，否则卡片还没进场、光板先亮着。 */
+    return '<div class="card-glow' + (o.feature ? ' span-2' : '') + '" style="' + glowVars(post) + '" ' + reveal + '>' +
+        card +
+        '<span class="card-spark" aria-hidden="true"></span>' +
+      '</div>';
   }
 
   function paletteCard(palette) {
@@ -150,7 +182,7 @@
         '</div>' +
         '<div class="post-grid" data-stagger>' +
           featured.map(function (post, i) {
-            return postCard(post, { feature: i === 0, index: i, delay: (i * 0.07).toFixed(2) });
+            return postCard(post, { feature: i === 0, index: i, delay: (i * 0.07).toFixed(2), glow: true });
           }).join('') +
         '</div>' +
       '</section>' +
@@ -201,7 +233,7 @@
           '<h2>更多文章<span class="thin">，关于动效、排版与前端实现</span></h2>' +
         '</div>' +
         '<div class="post-grid" data-stagger>' + rest.map(function (post, i) {
-          return postCard(post, { index: i + 3, delay: (i * 0.06).toFixed(2) });
+          return postCard(post, { index: i + 3, delay: (i * 0.06).toFixed(2), glow: true });
         }).join('') + '</div>' +
       '</section>' +
 
@@ -449,8 +481,8 @@
             }).join('') : '<p class="text-dim">这是这个标签下的唯一一篇。</p>') +
           '</div>' +
           '<div class="post-nav">' +
-            (prev ? '<a class="post-nav-card" href="/post/' + prev.slug + '" style="--cover:linear-gradient(100deg,' + prev.cover[0] + ',' + prev.cover[1] + ',' + prev.cover[2] + ')"><span>← 上一篇</span><b>' + esc(prev.title) + '</b></a>' : '') +
-            (next ? '<a class="post-nav-card" href="/post/' + next.slug + '" style="--cover:linear-gradient(100deg,' + next.cover[0] + ',' + next.cover[1] + ',' + next.cover[2] + ')"><span>下一篇 →</span><b>' + esc(next.title) + '</b></a>' : '') +
+            (prev ? '<a class="post-nav-card" href="/post/' + prev.slug + '" style="--cover:' + coverGradient(prev, 100) + '"><span>← 上一篇</span><b>' + esc(prev.title) + '</b></a>' : '') +
+            (next ? '<a class="post-nav-card" href="/post/' + next.slug + '" style="--cover:' + coverGradient(next, 100) + '"><span>下一篇 →</span><b>' + esc(next.title) + '</b></a>' : '') +
           '</div>' +
           '<div class="divider" aria-hidden="true"></div>' +
           '<div class="spread">' +

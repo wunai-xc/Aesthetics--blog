@@ -54,6 +54,9 @@ AB.COMMANDS = [
 ];
 
 /* 文章 ------------------------------------------------------------------- */
+/* 每个对象的字段：slug / title / kicker / date / minutes / tags / excerpt / featured / cover / body
+   cover：三个色相，用来生成封面渐变（不写也不填 image 时，退回当前配色的三色）
+   image：可选封面图（相对路径或绝对地址）。写了就用图，cover 与纹样层让位 —— 见 views.js 的 coverMarkup() */
 AB.POSTS = [
   {
     slug: 'color-as-structure',
