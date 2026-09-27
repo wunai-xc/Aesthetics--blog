@@ -800,7 +800,7 @@
           '<h2>为什么做这个站</h2>' +
           '<p class="text-dim">我见过太多「技术没问题但不好看」的页面，也见过太多「好看但不好用」的页面。区别往往不在组件库，而在有没有把颜色当成结构来对待。</p>' +
           '<p class="text-dim">所以我把整站做成一个可切换的实验场：八套配色、三档动效强度（完整 / 轻量 / 关闭）、可调的颗粒与氛围光。同一个版式在不同配色下的表现，是这里最想讨论的问题。</p>' +
-          '<p class="text-dim">这个站本身也是样本：文章、配色、命令全部内联在 <code>assets/js/data.js</code>，没有一行数据来自后端；偏好只写 localStorage，页面上没有任何埋点或统计脚本。</p>' +
+          '<p class="text-dim">这个站本身也是样本：文章、配色、命令全部内联在 <code>assets/js/data.js</code>，没有一行数据来自后端；偏好只写 localStorage。仓库里没有埋点或统计脚本——唯一可能的外部脚本是托管平台注入的 Web Analytics，在 Cloudflare 控制台可以关掉。</p>' +
           '<div class="contact-row">' +
             '<a class="btn btn-primary" href="mailto:' + esc(AB.SITE.email) + '" data-magnetic>写信给我<span class="btn-arrow">→</span></a>' +
             '<a class="btn btn-outline" href="' + esc(AB.SITE.repo) + '" target="_blank" rel="noopener">仓库源码</a>' +

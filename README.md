@@ -15,9 +15,13 @@ python3 -m http.server 8080
 
 部署时把整个目录丢到任意静态托管（GitHub Pages / Netlify / 对象存储）即可，无需后端。
 
-页面**不请求任何外部资源**：没有 CDN、没有外链字体、没有图片（favicon 是行内 SVG data URI），
+页面**不引用任何外部资源**：没有 CDN、没有外链字体、没有图片（favicon 是行内 SVG data URI），
 字体全部走系统字体栈（见 `tokens.css` 的 `--font-*`），因此离线打开与国内直连都正常。
 想换回 Fraunces / Space Grotesk / JetBrains Mono，把 `index.html` 顶部注释里的那行 `<link>` 放回 `head` 即可。
+
+> ⚠️ 部署后线上页面**会多出一个外部脚本**：Cloudflare Pages 的 Web Analytics 会注入
+> `static.cloudflareinsights.com/beacon.min.js`。它不在本仓库里，在 Cloudflare 控制台的
+> Web Analytics 里关掉即可——关掉之后页面才是真正的「零外部请求」。
 
 ## 目录结构
 
