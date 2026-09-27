@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap.xml — 只有根地址是「规范 URL」。
+  本站用 Hash 路由（#/post/<slug>），而搜索引擎不会把带片段（fragment）的地址
+  当作独立页面收录，所以这里只列根地址；文章页能被抓取，但不会各自成为一条索引。
+  想让每篇文章都有自己的可索引 URL，需要改成路径路由 + Cloudflare Pages 的
+  _redirects 回退（详见 README 的「部署与 SEO」一节）。
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://aeblog.wunai.top/</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

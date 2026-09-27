@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  feed.xml — 手写的静态 RSS。
+  feed.xml — 手写的静态 RSS（站点部署在 Cloudflare Pages，域名 https://aeblog.wunai.top）。
   本站是 Hash 路由的单页站点，所以文章链接带 #/post/<slug>；阅读器会照原样打开，页面自己会路由到那一篇。
-  新增文章后需要手动往这里补一个 <item>（顺序：新文章在最上面），并在 index.html 的 <link rel="alternate"> 保持不变。
-  域名变更时，替换下面所有 https://wunai-xc.github.io/Aesthetics--blog/ 前缀即可。
+  新增文章后需要手动往这里补一个 <item>（新文章放最上面）。
+  换域名时，把下面所有 https://aeblog.wunai.top/ 前缀替换掉即可。
 -->
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>AESTHETICS — 纯粹色彩美学博客</title>
-    <link>https://wunai-xc.github.io/Aesthetics--blog/</link>
+    <link>https://aeblog.wunai.top/</link>
     <description>关于色彩、动效与排版的静态博客：八套配色系统、零依赖、零外部请求。</description>
     <language>zh-CN</language>
     <copyright>© 2026 AESTHETICS</copyright>
     <generator>手写 · 数据源 assets/js/data.js</generator>
     <lastBuildDate>Wed, 11 Feb 2026 09:00:00 +0800</lastBuildDate>
-    <atom:link href="https://wunai-xc.github.io/Aesthetics--blog/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <atom:link href="https://aeblog.wunai.top/feed.xml" rel="self" type="application/rss+xml"></atom:link>
 
     <item>
       <title>色彩即结构：先把颜色排进网格，再写字</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/color-as-structure</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/color-as-structure</guid>
+      <link>https://aeblog.wunai.top/#/post/color-as-structure</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/color-as-structure</guid>
       <pubDate>Wed, 11 Feb 2026 09:00:00 +0800</pubDate>
       <category>色彩</category>
       <category>排版</category>
@@ -28,8 +28,8 @@
 
     <item>
       <title>为阅读而动的七个原则</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/motion-for-reading</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/motion-for-reading</guid>
+      <link>https://aeblog.wunai.top/#/post/motion-for-reading</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/motion-for-reading</guid>
       <pubDate>Tue, 03 Feb 2026 09:00:00 +0800</pubDate>
       <category>动效</category>
       <category>前端</category>
@@ -38,8 +38,8 @@
 
     <item>
       <title>在浏览器里调和一整套配色：HSL 够用吗</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/oklch-practice</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/oklch-practice</guid>
+      <link>https://aeblog.wunai.top/#/post/oklch-practice</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/oklch-practice</guid>
       <pubDate>Tue, 27 Jan 2026 09:00:00 +0800</pubDate>
       <category>色彩</category>
       <category>前端</category>
@@ -48,8 +48,8 @@
 
     <item>
       <title>排版三级秤：字阶、行高与留白怎么互相让步</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/type-scale-three</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/type-scale-three</guid>
+      <link>https://aeblog.wunai.top/#/post/type-scale-three</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/type-scale-three</guid>
       <pubDate>Mon, 19 Jan 2026 09:00:00 +0800</pubDate>
       <category>排版</category>
       <category>方法论</category>
@@ -58,8 +58,8 @@
 
     <item>
       <title>噪点与颗粒：给纯色加一点呼吸</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/noise-and-grain</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/noise-and-grain</guid>
+      <link>https://aeblog.wunai.top/#/post/noise-and-grain</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/noise-and-grain</guid>
       <pubDate>Thu, 08 Jan 2026 09:00:00 +0800</pubDate>
       <category>质感</category>
       <category>色彩</category>
@@ -68,8 +68,8 @@
 
     <item>
       <title>静态站点也能全互动：零依赖交互清单</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/interactive-static</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/interactive-static</guid>
+      <link>https://aeblog.wunai.top/#/post/interactive-static</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/interactive-static</guid>
       <pubDate>Sun, 21 Dec 2025 09:00:00 +0800</pubDate>
       <category>前端</category>
       <category>动效</category>
@@ -78,8 +78,8 @@
 
     <item>
       <title>配色食谱：八套可以直接抄走的色彩系统</title>
-      <link>https://wunai-xc.github.io/Aesthetics--blog/#/post/palette-cookbook</link>
-      <guid isPermaLink="true">https://wunai-xc.github.io/Aesthetics--blog/#/post/palette-cookbook</guid>
+      <link>https://aeblog.wunai.top/#/post/palette-cookbook</link>
+      <guid isPermaLink="true">https://aeblog.wunai.top/#/post/palette-cookbook</guid>
       <pubDate>Fri, 05 Dec 2025 09:00:00 +0800</pubDate>
       <category>色彩</category>
       <category>质感</category>

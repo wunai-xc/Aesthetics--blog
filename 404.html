@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="void" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>404 — AESTHETICS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07070a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307070a'/%3E%3Ccircle cx='11' cy='11' r='5' fill='%23c8ff2f'/%3E%3Ccircle cx='21' cy='16' r='5' fill='%236b5cff'/%3E%3Ccircle cx='14' cy='22' r='5' fill='%23ff4d6d'/%3E%3C/svg%3E">
+<!--
+  Cloudflare Pages 会把本文件用任意「找不到的路径」渲染出来，此时相对路径会按请求的
+  路径去解析（/foo/bar 下的 assets/css/… 会指向 /foo/assets/…），所以这里一律用
+  根绝对路径 /assets/…。若日后把站点部署到子路径，需要同步改这几行。
+  本页不加载 JS：不依赖路由与偏好，纯 HTML + CSS，断网也能看。
+  data-palette="void" 是必须的——配色变量来自 tokens.css 的 [data-palette] 选择器。
+-->
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/layout.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href="/assets/css/views.css">
+<link rel="stylesheet" href="/assets/css/animations.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="aura" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="site-header is-stuck">
+  <div class="header-inner container">
+    <a class="brand" href="/#/" aria-label="AESTHETICS 首页">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-name">AESTHETICS</span>
+    </a>
+    <nav class="nav main-nav" aria-label="主导航">
+      <a href="/#/">首页</a>
+      <a href="/#/archive">文章</a>
+      <a href="/#/lab">色彩实验室</a>
+      <a href="/#/about">关于</a>
+    </nav>
+  </div>
+</header>
+
+<main class="view">
+  <section class="container notfound">
+    <p class="eyebrow">Error 404</p>
+    <p class="notfound-code">404</p>
+    <h1>服务器上找不到这个路径</h1>
+    <p class="lede">这个站是纯静态的：整个域名下只有 <code>index.html</code>、几个资源文件和 <code>feed.xml</code>，文章都走 <code>#/post/&lt;slug&gt;</code> 这样的片段路由。所以地址栏里的这个路径没有对应的文件。</p>
+    <div class="cluster">
+      <a class="btn btn-primary" href="/#/">回到首页<span class="btn-arrow">→</span></a>
+      <a class="btn btn-outline" href="/#/archive">全部文章</a>
+      <a class="btn btn-ghost" href="/#/lab">色彩实验室</a>
+    </div>
+    <p class="form-note">如果你是从旧链接进来的，试试从 <a href="/#/archive">文章列表</a> 或 <a href="/feed.xml">RSS</a> 里找。</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-colophon">
+    <p>© <span>2026</span> AESTHETICS · 用原生 HTML / CSS / JS 手写</p>
+    <p class="footer-palette">配色：Void · 深空酸柠</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -36,6 +36,9 @@ assets/js/views.js         六个视图：home / archive / post / lab / about / 
 assets/js/router.js        Hash 路由 + 三色遮罩过渡
 assets/js/app.js           引导层：加载动画、配色面板、设置、命令面板、快捷键
 feed.xml                   手写的 RSS（Hash 路由链接，域名变更时全局替换前缀）
+404.html                   服务器级 404（Cloudflare Pages 用它渲染未知路径，不加载 JS）
+robots.txt / sitemap.xml   抓取规则与站点地图（只有根地址是规范 URL）
+_headers                   Cloudflare Pages 响应头（安全头 + 资源短缓存）
 ```
 
 ## 路由
@@ -87,6 +90,31 @@ feed.xml                   手写的 RSS（Hash 路由链接，域名变更时�
 `data.js` 里已手写的 `tok-*` 片段只是「关掉 JS 时仍然有色」的兜底版。
 
 加完文章后，顺手在 `feed.xml` 顶部补一个 `<item>`（内容取自 `title` / `date` / `excerpt` / `tags`）。
+
+## 部署（Cloudflare Pages）
+
+线上地址：<https://aeblog.wunai.top>　仓库：<https://github.com/wunai-xc/Aesthetics--blog>
+
+仓库已连接 Cloudflare Pages，改完推 `main` 分支即自动部署。项目设置：
+
+| 项 | 值 |
+| --- | --- |
+| Framework preset | None |
+| Build command | 留空（没有构建步骤） |
+| Build output directory | `/`（仓库根目录） |
+| Production branch | `main` |
+
+因为用的是 Hash 路由，服务器只需要提供 `index.html`，**不需要** `_redirects` 把路径回退到入口文件。
+未知路径由根目录的 `404.html` 渲染（该文件里所有资源引用都是根绝对路径 `/assets/…`：
+404 响应会带着原始 URL 返回，相对路径会被解析到错误的位置）。
+
+### 部署与 SEO 的现实
+
+- **每篇文章没有独立 URL。** `#/post/<slug>` 里的片段不会发给服务器，搜索引擎也不把它当作独立页面收录。
+  所以 `sitemap.xml` 只声明了根地址，`robots.txt` 允许全站抓取。
+- 想让每篇文章各自可被索引，需要把路由从 hash 改成路径（`/post/<slug>`），再在 Pages 上加一条
+  `/* /index.html 200` 的 `_redirects` 回退；`router.js` 的解析、`feed.xml` 与 `sitemap.xml` 的链接要一起改。
+- RSS 里的链接是绝对地址，换域名时全局替换 `https://aeblog.wunai.top/` 前缀即可（`feed.xml`、`sitemap.xml`、`robots.txt` 三处）。
 
 ## 交互与无障碍约定
 

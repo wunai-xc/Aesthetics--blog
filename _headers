@@ -1,0 +1,10 @@
+# Cloudflare Pages 会读取这个文件（它本身不会作为静态资源发布）。
+# 资源文件名没有指纹，所以这里给的是短缓存：部署后最多 10 分钟自动过期，
+# 不会出现「用户浏览器里留着一年前的 CSS」这种问题。
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+/assets/*
+  Cache-Control: public, max-age=600

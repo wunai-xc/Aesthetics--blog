@@ -1,0 +1,5 @@
+# robots.txt — 全站可抓取；文章都在 #/post/<slug> 片段里，不是独立 URL
+User-agent: *
+Allow: /
+
+Sitemap: https://aeblog.wunai.top/sitemap.xml
