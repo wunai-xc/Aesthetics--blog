@@ -1,0 +1,306 @@
+/* ==========================================================================
+   tokens.css — 设计变量与八套配色系统
+   所有颜色都集中在这里。切一套 data-palette，全站色彩随之重构。
+   ========================================================================== */
+
+:root {
+  /* 字体 ------------------------------------------------------------------ */
+  --font-display: "Fraunces", "Songti SC", Georgia, "Times New Roman", serif;
+  --font-sans: "Space Grotesk", "PingFang SC", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* 字阶（流体排版） ------------------------------------------------------ */
+  --step--2: clamp(0.7rem, 0.68rem + 0.1vw, 0.76rem);
+  --step--1: clamp(0.82rem, 0.8rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.09rem);
+  --step-1: clamp(1.2rem, 1.12rem + 0.4vw, 1.4rem);
+  --step-2: clamp(1.45rem, 1.3rem + 0.75vw, 1.85rem);
+  --step-3: clamp(1.8rem, 1.5rem + 1.4vw, 2.6rem);
+  --step-4: clamp(2.2rem, 1.7rem + 2.3vw, 3.6rem);
+  --step-5: clamp(2.7rem, 1.9rem + 3.6vw, 5rem);
+  --step-6: clamp(3.2rem, 1.8rem + 6.4vw, 7.6rem);
+
+  /* 空间 ------------------------------------------------------------------ */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2.25rem;
+  --space-xl: 3.5rem;
+  --space-2xl: 5.5rem;
+  --space-3xl: 8rem;
+
+  --container: 78rem;
+  --container-narrow: 46rem;
+  --gutter: clamp(1.15rem, 5vw, 3.5rem);
+  --header-h: 4.5rem;
+
+  /* 形状与阴影 ------------------------------------------------------------ */
+  --radius-s: 0.5rem;
+  --radius-m: 1rem;
+  --radius-l: 1.6rem;
+  --radius-xl: 2.4rem;
+  --radius-pill: 999px;
+
+  /* 时间与曲线 ------------------------------------------------------------ */
+  --dur-instant: 0.12s;
+  --dur-fast: 0.22s;
+  --dur: 0.42s;
+  --dur-slow: 0.9s;
+  --dur-glacial: 2.4s;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0.05, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-linear: linear;
+
+  /* 层级 ------------------------------------------------------------------ */
+  --z-bg: 0;
+  --z-content: 10;
+  --z-header: 60;
+  --z-menu: 70;
+  --z-dialog: 90;
+  --z-toast: 95;
+  --z-cursor: 120;
+  --z-loader: 130;
+
+  /* 正文缩放（设置面板可调） --------------------------------------------- */
+  --font-scale: 1;
+}
+
+/* ==========================================================================
+   Palette · void — 深空酸柠（默认）
+   ========================================================================== */
+[data-palette="void"] {
+  color-scheme: dark;
+  --bg: #07070a;
+  --bg-2: #0c0c12;
+  --surface: #131319;
+  --surface-2: #1a1a22;
+  --line: #26262f;
+  --text: #f5f5f2;
+  --text-dim: #9797a3;
+  --c1: #c8ff2f;
+  --c2: #6b5cff;
+  --c3: #ff4d6d;
+  --on-c1: #10140a;
+  --on-c2: #f4f2ff;
+  --on-c3: #180206;
+  --glow-1: rgba(200, 255, 47, 0.30);
+  --glow-2: rgba(107, 92, 255, 0.34);
+  --glow-3: rgba(255, 77, 109, 0.30);
+  --shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.9);
+  --scrim: rgba(4, 4, 7, 0.72);
+  --grid-line: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   Palette · bloom — 霓虹绽放
+   ========================================================================== */
+[data-palette="bloom"] {
+  color-scheme: dark;
+  --bg: #0a0513;
+  --bg-2: #140823;
+  --surface: #1d0e33;
+  --surface-2: #271346;
+  --line: #37205c;
+  --text: #f8f2ff;
+  --text-dim: #ac9ad0;
+  --c1: #ff2fb9;
+  --c2: #00e5ff;
+  --c3: #ffd166;
+  --on-c1: #21001a;
+  --on-c2: #00232a;
+  --on-c3: #251a00;
+  --glow-1: rgba(255, 47, 185, 0.38);
+  --glow-2: rgba(0, 229, 255, 0.32);
+  --glow-3: rgba(255, 209, 102, 0.30);
+  --shadow: 0 30px 70px -28px rgba(20, 0, 40, 0.95);
+  --scrim: rgba(8, 3, 18, 0.72);
+  --grid-line: rgba(255, 255, 255, 0.06);
+}
+
+/* ==========================================================================
+   Palette · ember — 余烬
+   ========================================================================== */
+[data-palette="ember"] {
+  color-scheme: dark;
+  --bg: #0d0906;
+  --bg-2: #170f09;
+  --surface: #20150d;
+  --surface-2: #2b1c11;
+  --line: #3a2614;
+  --text: #fff4e6;
+  --text-dim: #b5967a;
+  --c1: #ff6a13;
+  --c2: #ffe14d;
+  --c3: #ff2e63;
+  --on-c1: #1c0800;
+  --on-c2: #1e1800;
+  --on-c3: #1c0008;
+  --glow-1: rgba(255, 106, 19, 0.36);
+  --glow-2: rgba(255, 225, 77, 0.26);
+  --glow-3: rgba(255, 46, 99, 0.30);
+  --shadow: 0 30px 70px -28px rgba(0, 0, 0, 0.92);
+  --scrim: rgba(10, 6, 3, 0.75);
+  --grid-line: rgba(255, 220, 180, 0.06);
+}
+
+/* ==========================================================================
+   Palette · abyss — 深海
+   ========================================================================== */
+[data-palette="abyss"] {
+  color-scheme: dark;
+  --bg: #04121a;
+  --bg-2: #071e2b;
+  --surface: #0b2a3a;
+  --surface-2: #0e3446;
+  --line: #17475f;
+  --text: #eaf7ff;
+  --text-dim: #83abbd;
+  --c1: #14f1c8;
+  --c2: #ffc857;
+  --c3: #4f8cff;
+  --on-c1: #00241e;
+  --on-c2: #231800;
+  --on-c3: #001130;
+  --glow-1: rgba(20, 241, 200, 0.32);
+  --glow-2: rgba(255, 200, 87, 0.26);
+  --glow-3: rgba(79, 140, 255, 0.32);
+  --shadow: 0 30px 70px -28px rgba(0, 12, 20, 0.95);
+  --scrim: rgba(3, 14, 20, 0.72);
+  --grid-line: rgba(200, 240, 255, 0.06);
+}
+
+/* ==========================================================================
+   Palette · solar — 正午烈阳（亮）
+   ========================================================================== */
+[data-palette="solar"] {
+  color-scheme: light;
+  --bg: #f6efe3;
+  --bg-2: #fff9ef;
+  --surface: #ffffff;
+  --surface-2: #fff4e3;
+  --line: #e4d8c2;
+  --text: #17140f;
+  --text-dim: #6e6553;
+  --c1: #ff4b1f;
+  --c2: #1b3bd8;
+  --c3: #ffb703;
+  --on-c1: #fff6f2;
+  --on-c2: #f2f5ff;
+  --on-c3: #241a00;
+  --glow-1: rgba(255, 75, 31, 0.24);
+  --glow-2: rgba(27, 59, 216, 0.20);
+  --glow-3: rgba(255, 183, 3, 0.26);
+  --shadow: 0 26px 60px -30px rgba(60, 40, 10, 0.35);
+  --scrim: rgba(250, 244, 232, 0.78);
+  --grid-line: rgba(20, 15, 5, 0.06);
+}
+
+/* ==========================================================================
+   Palette · riso — 丝网印（亮）
+   ========================================================================== */
+[data-palette="riso"] {
+  color-scheme: light;
+  --bg: #f3f3ee;
+  --bg-2: #fbfbf7;
+  --surface: #ffffff;
+  --surface-2: #f7f7f1;
+  --line: #e0e0d6;
+  --text: #12141a;
+  --text-dim: #62666f;
+  --c1: #ff5c8a;
+  --c2: #2f6bff;
+  --c3: #ffd400;
+  --on-c1: #fff2f6;
+  --on-c2: #f2f6ff;
+  --on-c3: #241d00;
+  --glow-1: rgba(255, 92, 138, 0.26);
+  --glow-2: rgba(47, 107, 255, 0.22);
+  --glow-3: rgba(255, 212, 0, 0.30);
+  --shadow: 0 26px 60px -32px rgba(30, 30, 40, 0.30);
+  --scrim: rgba(246, 246, 241, 0.80);
+  --grid-line: rgba(10, 12, 20, 0.06);
+}
+
+/* ==========================================================================
+   Palette · porcelain — 瓷白（亮）
+   ========================================================================== */
+[data-palette="porcelain"] {
+  color-scheme: light;
+  --bg: #f5f4f8;
+  --bg-2: #fdfcff;
+  --surface: #ffffff;
+  --surface-2: #f6f5fb;
+  --line: #e4e2ee;
+  --text: #15141c;
+  --text-dim: #6a6778;
+  --c1: #4a3aff;
+  --c2: #ff7a9c;
+  --c3: #12b981;
+  --on-c1: #f4f3ff;
+  --on-c2: #2a0713;
+  --on-c3: #00271b;
+  --glow-1: rgba(74, 58, 255, 0.22);
+  --glow-2: rgba(255, 122, 156, 0.22);
+  --glow-3: rgba(18, 185, 129, 0.20);
+  --shadow: 0 26px 60px -32px rgba(40, 38, 70, 0.28);
+  --scrim: rgba(248, 247, 252, 0.80);
+  --grid-line: rgba(20, 20, 40, 0.05);
+}
+
+/* ==========================================================================
+   Palette · mint — 薄荷（亮）
+   ========================================================================== */
+[data-palette="mint"] {
+  color-scheme: light;
+  --bg: #ecf6f1;
+  --bg-2: #f8fdfa;
+  --surface: #ffffff;
+  --surface-2: #f1f9f5;
+  --line: #d6e8de;
+  --text: #0c1a14;
+  --text-dim: #57706a;
+  --c1: #0f9d63;
+  --c2: #ff6b5e;
+  --c3: #1a5cff;
+  --on-c1: #f0fff8;
+  --on-c2: #2b0b07;
+  --on-c3: #eef3ff;
+  --glow-1: rgba(15, 157, 99, 0.22);
+  --glow-2: rgba(255, 107, 94, 0.22);
+  --glow-3: rgba(26, 92, 255, 0.20);
+  --shadow: 0 26px 60px -32px rgba(18, 50, 38, 0.26);
+  --scrim: rgba(240, 250, 245, 0.80);
+  --grid-line: rgba(10, 40, 30, 0.05);
+}
+
+/* ==========================================================================
+   派生变量 —— 由上面的基色算出，所有组件只使用这些
+   ========================================================================== */
+:root {
+  --c1-soft: color-mix(in srgb, var(--c1, #c8ff2f) 16%, transparent);
+  --c2-soft: color-mix(in srgb, var(--c2, #6b5cff) 16%, transparent);
+  --c3-soft: color-mix(in srgb, var(--c3, #ff4d6d) 16%, transparent);
+  --surface-glass: color-mix(in srgb, var(--surface, #131319) 72%, transparent);
+  --text-faint: color-mix(in srgb, var(--text, #fff) 62%, transparent);
+  --line-strong: color-mix(in srgb, var(--text, #fff) 22%, transparent);
+  --grad-hot: linear-gradient(100deg, var(--c1) 0%, var(--c3) 52%, var(--c2) 100%);
+  --grad-cool: linear-gradient(140deg, var(--c2) 0%, var(--c1) 100%);
+  --grad-mix: conic-gradient(from 210deg, var(--c1), var(--c2), var(--c3), var(--c1));
+}
+
+/* 色彩模式：轻量 / 关闭 */
+html[data-motion="subtle"] {
+  --dur: 0.3s;
+  --dur-slow: 0.5s;
+  --dur-glacial: 1.2s;
+}
+html[data-motion="off"] {
+  --dur-instant: 0.01s;
+  --dur-fast: 0.01s;
+  --dur: 0.01s;
+  --dur-slow: 0.01s;
+  --dur-glacial: 0.01s;
+}

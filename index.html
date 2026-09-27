@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="void" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AESTHETICS — 纯粹色彩美学博客</title>
+<meta name="description" content="一个关于色彩、动效与排版的静态博客：八套配色系统、全互动式交互、零依赖前端。">
+<meta name="theme-color" content="#07070a" id="themeColor">
+<meta name="color-scheme" content="dark light">
+<meta property="og:title" content="AESTHETICS — 纯粹色彩美学">
+<meta property="og:description" content="色彩即结构。八套配色系统、滚动动效、色彩实验室。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307070a'/%3E%3Ccircle cx='11' cy='11' r='5' fill='%23c8ff2f'/%3E%3Ccircle cx='21' cy='16' r='5' fill='%236b5cff'/%3E%3Ccircle cx='14' cy='22' r='5' fill='%23ff4d6d'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/views.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<script>document.documentElement.className = 'js';</script>
+</head>
+<body>
+
+<a class="skip-link" href="#view">跳到正文</a>
+
+<!-- 颗粒质感 / 色彩氛围层 -->
+<div class="grain" aria-hidden="true"></div>
+<div class="aura" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i></div>
+<canvas class="bg-canvas" id="bgCanvas" aria-hidden="true"></canvas>
+
+<!-- 自定义光标 -->
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-ring"></span><span class="cursor-dot"></span></div>
+
+<!-- 首屏加载动画 -->
+<div class="loader" id="loader" role="status" aria-label="正在准备色彩">
+  <div class="loader-bars" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i>
+  </div>
+  <p class="loader-word" aria-hidden="true">AESTHETICS</p>
+  <p class="loader-meta"><span id="loaderPct">0</span>% <span class="loader-hint">正在混合颜料</span></p>
+</div>
+
+<!-- 路由切换遮罩 -->
+<div class="veil" id="veil" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <div class="header-inner container">
+    <a class="brand" href="#/" aria-label="AESTHETICS 首页">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-name">AESTHETICS</span>
+    </a>
+
+    <nav class="nav main-nav" aria-label="主导航">
+      <a href="#/" data-nav="home">首页</a>
+      <a href="#/archive" data-nav="archive">文章</a>
+      <a href="#/lab" data-nav="lab">色彩实验室</a>
+      <a href="#/about" data-nav="about">关于</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" data-action="search" aria-label="搜索文章（快捷键 K）" title="搜索 · K">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M15.8 15.8 21 21"></path></svg>
+      </button>
+      <button class="icon-btn" data-action="palette" aria-label="切换配色（快捷键 P）" title="切换配色 · P">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="5.5"></circle><circle cx="15.5" cy="14" r="5.5"></circle></svg>
+      </button>
+      <button class="icon-btn" data-action="settings" aria-label="打开设置" title="设置 · ⌘,">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path><circle cx="9" cy="7" r="1.8"></circle><circle cx="15" cy="12" r="1.8"></circle><circle cx="7" cy="17" r="1.8"></circle></svg>
+      </button>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="mobileMenu" aria-label="打开菜单">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu" hidden>
+  <div class="mobile-menu-inner container">
+    <nav aria-label="移动端导航">
+      <a href="#/" data-nav-mobile="home"><em>01</em>首页</a>
+      <a href="#/archive" data-nav-mobile="archive"><em>02</em>文章</a>
+      <a href="#/lab" data-nav-mobile="lab"><em>03</em>色彩实验室</a>
+      <a href="#/about" data-nav-mobile="about"><em>04</em>关于</a>
+    </nav>
+    <div class="mobile-palettes" aria-label="快速配色">
+      <p class="mono-label">配色</p>
+      <div class="mobile-palette-row" id="mobilePalettes"></div>
+    </div>
+  </div>
+</div>
+
+<main class="view" id="view" tabindex="-1">
+  <noscript>
+    <section class="container section">
+      <h1>需要启用 JavaScript</h1>
+      <p>这个博客的路由、动效与色彩实验室都由原生 JavaScript 驱动。请开启 JavaScript 后刷新。</p>
+      <p>文章数据位于 <code>assets/js/data.js</code>。</p>
+    </section>
+  </noscript>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-marquee" aria-hidden="true">
+    <div class="marquee" data-marquee data-speed="0.55">
+      <div class="marquee-track">
+        <span>纯粹的色块</span><span aria-hidden="true">✳</span><span>滚动即动效</span><span aria-hidden="true">✳</span><span>零依赖</span><span aria-hidden="true">✳</span><span>静态但全互动</span><span aria-hidden="true">✳</span><span>排版三级秤</span><span aria-hidden="true">✳</span><span>颗粒与噪点</span><span aria-hidden="true">✳</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container footer-grid">
+    <div class="footer-col">
+      <p class="footer-brand">AESTHETICS</p>
+      <p class="footer-desc">一份关于色彩、动效与排版的长期笔记。全部为静态文件，可直接托管在任意静态服务器上。</p>
+    </div>
+    <div class="footer-col">
+      <p class="mono-label">导航</p>
+      <a href="#/">首页</a>
+      <a href="#/archive">全部文章</a>
+      <a href="#/lab">色彩实验室</a>
+      <a href="#/about">关于本站</a>
+    </div>
+    <div class="footer-col">
+      <p class="mono-label">标签</p>
+      <a href="#/archive?tag=色彩">色彩</a>
+      <a href="#/archive?tag=动效">动效</a>
+      <a href="#/archive?tag=排版">排版</a>
+      <a href="#/archive?tag=前端">前端</a>
+    </div>
+    <div class="footer-col">
+      <p class="mono-label">快捷键</p>
+      <p><kbd>K</kbd> 搜索 · <kbd>P</kbd> 换色</p>
+      <p><kbd>C</kbd> 彩纸 · <kbd>?</kbd> 设置</p>
+      <p class="footer-fine">↑↑↓↓←→←→BA 有惊喜</p>
+    </div>
+  </div>
+
+  <div class="container footer-colophon">
+    <p>© <span id="year">2026</span> AESTHETICS · 用原生 HTML / CSS / JS 手写</p>
+    <p class="footer-palette">当前配色：<span id="footerPalette">Void</span></p>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="回到顶部">
+  <svg viewBox="0 0 44 44" aria-hidden="true">
+    <circle class="to-top-track" cx="22" cy="22" r="19"></circle>
+    <circle class="to-top-bar" id="toTopBar" cx="22" cy="22" r="19"></circle>
+  </svg>
+  <span aria-hidden="true">↑</span>
+</button>
+
+<!-- 命令面板 -->
+<dialog class="dialog" id="cmdDialog" aria-label="命令面板">
+  <div class="cmd">
+    <div class="cmd-head">
+      <svg class="cmd-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M15.8 15.8 21 21"></path></svg>
+      <input class="cmd-input" id="cmdInput" type="search" placeholder="搜索文章、标签或命令…" aria-label="搜索" autocomplete="off" spellcheck="false">
+      <kbd class="cmd-esc">ESC</kbd>
+    </div>
+    <ul class="cmd-list" id="cmdList" role="listbox" aria-label="结果"></ul>
+    <div class="cmd-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 打开</span>
+      <span id="cmdCount"></span>
+    </div>
+  </div>
+</dialog>
+
+<!-- 设置面板 -->
+<dialog class="dialog" id="setDialog" aria-label="显示设置">
+  <div class="settings">
+    <header class="settings-head">
+      <h2>显示设置</h2>
+      <button class="icon-btn" data-action="close-dialog" aria-label="关闭设置">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+    </header>
+
+    <section class="settings-block">
+      <h3 class="mono-label">配色系统</h3>
+      <div class="palette-grid" id="paletteGrid"></div>
+    </section>
+
+    <section class="settings-block">
+      <h3 class="mono-label">动效强度</h3>
+      <div class="seg" role="group" id="motionSeg">
+        <button data-motion="full">完整</button>
+        <button data-motion="subtle">轻量</button>
+        <button data-motion="off">关闭</button>
+      </div>
+      <p class="settings-note">关闭后会停掉 canvas 背景、光标跟随与大部分位移动画，仅保留淡入。</p>
+    </section>
+
+    <section class="settings-block">
+      <h3 class="mono-label">开关</h3>
+      <label class="switch"><input type="checkbox" data-toggle="cursor"><span class="switch-ui"></span><span>自定义光标</span></label>
+      <label class="switch"><input type="checkbox" data-toggle="grain"><span class="switch-ui"></span><span>颗粒质感</span></label>
+      <label class="switch"><input type="checkbox" data-toggle="aurora"><span class="switch-ui"></span><span>色彩氛围光</span></label>
+      <label class="switch"><input type="checkbox" data-toggle="marquee"><span class="switch-ui"></span><span>跑马灯自动滚动</span></label>
+    </section>
+
+    <section class="settings-block">
+      <h3 class="mono-label">正文字号</h3>
+      <div class="seg" role="group" id="fontSeg">
+        <button data-font="0.95">小</button>
+        <button data-font="1">标准</button>
+        <button data-font="1.1">大</button>
+        <button data-font="1.22">特大</button>
+      </div>
+    </section>
+
+    <section class="settings-block">
+      <h3 class="mono-label">快捷键</h3>
+      <ul class="keys">
+        <li><kbd>K</kbd><span>搜索 / 命令面板</span></li>
+        <li><kbd>P</kbd><span>切换下一套配色</span></li>
+        <li><kbd>L</kbd><span>随机配色</span></li>
+        <li><kbd>C</kbd><span>撒一把彩纸</span></li>
+        <li><kbd>G</kbd><span>回到顶部</span></li>
+        <li><kbd>Esc</kbd><span>关闭弹层</span></li>
+      </ul>
+    </section>
+
+    <footer class="settings-foot">
+      <button class="btn btn-ghost" data-action="reset-prefs">恢复默认</button>
+      <p class="settings-note">偏好保存在本地 localStorage，不上传任何数据。</p>
+    </footer>
+  </div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+<canvas class="confetti-canvas" id="confetti" aria-hidden="true"></canvas>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/fx.js"></script>
+<script src="assets/js/views.js"></script>
+<script src="assets/js/router.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

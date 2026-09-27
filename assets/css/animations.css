@@ -1,0 +1,253 @@
+/* ==========================================================================
+   animations.css — 关键帧、滚动揭示、路由过渡、无障碍降级
+   ========================================================================== */
+
+/* 关键帧 ----------------------------------------------------------------- */
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes grain-drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  20%  { transform: translate3d(-2%, 1%, 0); }
+  40%  { transform: translate3d(1%, -2%, 0); }
+  60%  { transform: translate3d(-1%, 2%, 0); }
+  80%  { transform: translate3d(2%, -1%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes aura-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(12vw, 8vh, 0) scale(1.15); }
+  66%      { transform: translate3d(-6vw, 14vh, 0) scale(0.92); }
+}
+@keyframes aura-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  40%      { transform: translate3d(-14vw, -10vh, 0) scale(0.88); }
+  70%      { transform: translate3d(6vw, -16vh, 0) scale(1.2); }
+}
+@keyframes aura-c {
+  0%, 100% { transform: translate3d(-10%, 0, 0) scale(0.9); }
+  50%      { transform: translate3d(14%, -12%, 0) scale(1.25); }
+}
+
+@keyframes ripple-out {
+  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+@keyframes marquee-slide {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-100%, 0, 0); }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes toast-out {
+  to { opacity: 0; transform: translateY(10px) scale(0.96); }
+}
+
+@keyframes bar-load {
+  0%, 100% { height: 22%; }
+  50%      { height: 100%; }
+}
+
+@keyframes veil-down {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes veil-up {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.6); opacity: 0.4; }
+}
+
+@keyframes cue-scan {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+@keyframes hue-turn {
+  from { filter: hue-rotate(0deg); }
+  to   { filter: hue-rotate(360deg); }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50%      { transform: rotate(2deg); }
+}
+
+@keyframes underline-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes text-rise {
+  from { transform: translateY(105%) rotate(4deg); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+@keyframes letter-pop {
+  0%   { transform: translateY(0) scale(1); }
+  40%  { transform: translateY(-12%) scale(1.08); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes rainbow-cycle {
+  from { filter: hue-rotate(0deg) saturate(1.25); }
+  to   { filter: hue-rotate(360deg) saturate(1.25); }
+}
+
+@keyframes gradient-pan {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%      { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 滚动揭示系统 ----------------------------------------------------------- */
+[data-reveal] {
+  --reveal-shift: 26px;
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-shift), 0);
+  transition:
+    opacity 0.72s var(--ease-out) var(--reveal-delay, 0s),
+    transform 0.86s var(--ease-out) var(--reveal-delay, 0s),
+    filter 0.72s var(--ease-out) var(--reveal-delay, 0s),
+    clip-path 0.9s var(--ease-out) var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+[data-reveal="down"] { transform: translate3d(0, calc(var(--reveal-shift) * -1), 0); }
+[data-reveal="left"] { transform: translate3d(var(--reveal-shift), 0, 0); }
+[data-reveal="right"] { transform: translate3d(calc(var(--reveal-shift) * -1), 0, 0); }
+[data-reveal="scale"] { transform: scale(0.94); --reveal-shift: 0px; }
+[data-reveal="fade"] { transform: none; --reveal-shift: 0px; }
+[data-reveal="blur"] { filter: blur(14px); transform: translate3d(0, 14px, 0); }
+[data-reveal="clip"] {
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+  --reveal-shift: 0px;
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* 逐字/逐行上升 --------------------------------------------------------- */
+.line-mask { display: block; overflow: hidden; }
+.line-mask > span { display: inline-block; transform: translateY(105%); opacity: 0; }
+.is-in .line-mask > span,
+.line-mask.is-in > span {
+  animation: text-rise 0.9s var(--ease-out) forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+/* 悬停文字下划线 --------------------------------------------------------- */
+.link-underline { position: relative; }
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--dur) var(--ease-out);
+}
+.link-underline:hover::after { transform: scaleX(1); }
+
+/* 视图进出 --------------------------------------------------------------- */
+.view-enter { animation: view-in 0.62s var(--ease-out) both; }
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+.view-leave { animation: view-out 0.28s var(--ease-out) both; }
+@keyframes view-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
+
+/* 全站氛围动画 ----------------------------------------------------------- */
+.breathe { animation: breathe 5s var(--ease-in-out) infinite; }
+.float-y { animation: float-y 6s var(--ease-in-out) infinite; }
+.sway { animation: sway 7s var(--ease-in-out) infinite; transform-origin: 50% 100%; }
+.rainbow-mode { animation: rainbow-cycle 12s linear infinite; }
+
+.gradient-pan {
+  background-size: 220% 220%;
+  animation: gradient-pan 12s var(--ease-in-out) infinite;
+}
+
+/* 悬停时的即时反馈 ------------------------------------------------------- */
+.hover-lift { transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+.hover-lift:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+
+/* 无障碍 / 动效降级 ----------------------------------------------------- */
+html[data-motion="off"] [data-reveal] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  clip-path: none;
+  transition: none;
+}
+html[data-motion="off"] .view-enter,
+html[data-motion="off"] .view-leave { animation: none; }
+html[data-motion="off"] .aura,
+html[data-motion="off"] .orbit { display: none; }
+html[data-motion="off"] .cursor { display: none; }
+html[data-motion="off"] *,
+html[data-motion="off"] *::before,
+html[data-motion="off"] *::after {
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+    scroll-behavior: auto !important;
+  }
+  html:not([data-motion="full"]) [data-reveal] { opacity: 1; transform: none; filter: none; clip-path: none; }
+  html:not([data-motion="full"]) .bg-canvas,
+  html:not([data-motion="full"]) .aura { display: none; }
+}
