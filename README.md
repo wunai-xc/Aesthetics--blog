@@ -33,7 +33,7 @@ assets/css/layout.css      站点骨架：页头、导航、移动菜单、页�
 assets/css/components.css  按钮、卡片、跑马灯、弹层、提示、加载动画
 assets/css/views.css       各视图版式（归档、文章、实验室、书架、隐私页）
 assets/css/animations.css  关键帧、滚动揭示、路由过渡、动效降级
-assets/css/glass.css       液态玻璃卡片面：卡片 / 面板 / 弹层共用的一层玻璃（参数在 tokens.css）
+assets/css/glass.css       液态玻璃面：卡片 / 面板 / 弹层 / 顶栏共用的一层玻璃（参数在 tokens.css）
 assets/js/data.js          站点信息、配色表、命令表、文章正文（唯一的数据源）
 assets/js/store.js         localStorage 偏好、配色切换、收藏/点赞/阅读进度
 assets/js/fx.js            交互引擎：canvas、光标、揭示、3D 倾斜、彩纸、目录、小节链接
@@ -144,10 +144,12 @@ _headers                   Cloudflare Pages 响应头（安全头 + 资源短缓
 - 动效分三档：完整 / 轻量 / 关闭；系统 `prefers-reduced-motion: reduce` 时默认降级为「轻量」，用户仍可手动选「完整」。
 - 只动 `transform` 与 `opacity`；滚动读写统一在 `requestAnimationFrame` 内完成；标签页隐藏时停掉 canvas 循环。
 - 键盘可达：跳转到正文的 skip link、命令面板方向键导航、`dialog` 原生焦点管理。
-- 卡片表面统一走 `glass.css` 的液态玻璃层，按内核能力逐级降级，任何一级卡片都留着底色：
+- 卡片与顶栏统一走 `glass.css` 的液态玻璃层，按内核能力逐级降级，任何一级都留着底色
+  （卡片用 `components.css` / `views.css` 里那层实色底，顶栏用 `layout.css` 里的实色 `--bg`：
+  顶栏下面压着正文，透明出去就是把两行字叠在一起）：
 
   1. 认不出 `:is()` 的老内核（老 Android WebView、Safari 13 一类）：本文件整条失效，
-     卡片用 `components.css` / `views.css` 里那层实色底 —— 也就是改造前的样子；
+     退回上面那层实色底 —— 也就是改造前的样子；
   2. 没有 `color-mix()` 的内核（Chrome < 111 / Safari < 16.2 / Firefox < 113）：同上，实色底；
   3. 有 `color-mix()` 但没有 `backdrop-filter`（Chrome 76–110 / Safari < 16.2 / Firefox 103–112）：
      换成 84% 的半透明底，看得见背后一点点色，但不虚化；

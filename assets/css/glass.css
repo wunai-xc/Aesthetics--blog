@@ -1,8 +1,9 @@
 /* ==========================================================================
    glass.css — 液态玻璃卡片面
    --------------------------------------------------------------------------
-   全站所有「卡片」共用同一层玻璃：半透明底色 + 背景虚化 + 顶边一道高光描边。
+   全站所有「卡片」与顶栏共用同一层玻璃：半透明底色 + 背景虚化 + 顶边一道高光描边。
    参数在 tokens.css 的「液态玻璃」一段（--glass-*），要整体调通透度只改那里。
+   顶栏是后来接上的（见「顶栏」一节）：它只用底色与虚化两个令牌，不用会动的高光。
 
    兼容策略：按内核能力逐级增强，任何一级都不会把卡片变成「没有底色的透明块」。
    （对应下面代码块里的 1) / 2) / 3)）
@@ -48,6 +49,38 @@
   :is(.card, .palette-card, .value-card, .shelf-row, .post-nav-card,
       .lab-panel, .lab-current, .contrast-row, .hero-figure, .dialog) {
     background: var(--glass-surface);
+    -webkit-backdrop-filter: var(--glass-filter);
+    backdrop-filter: var(--glass-filter);
+  }
+}
+
+/* ==========================================================================
+   顶栏：和卡片同一层玻璃，只是没有那层会动的高光
+   --------------------------------------------------------------------------
+   顶栏贴在最上方、底下整页都在滚，比卡片多两条约束：
+   - 不用 --glass-surface：那是「高光 + 色散 + 底色」三层，高光跟着指针的 --mx/--my 走，
+     一条横贯屏幕的条上放着会动的光斑，滚动时太吵，只用纯色 tint；
+   - 底色永远不许透明：认不出 color-mix 的内核本段整条失效，退回 layout.css 里那层
+     实色 --bg —— 顶栏下面压着正文，透出去就是把两行字叠在一起。
+   .is-stuck（fx.js 在滚动超过 20px 时加上）是「已经有内容滑到顶栏下面」的状态：
+   底色厚一档、底边换成 --glass-rim 的亮边，再补一道投影，和卡片被抬起来时同一套语言。
+   ========================================================================== */
+@supports (background: color-mix(in srgb, red 50%, transparent)) {
+  .site-header {
+    background: var(--glass-tint);
+    border-bottom-color: var(--glass-edge);
+  }
+  .site-header.is-stuck {
+    background: var(--glass-tint-strong);
+    border-bottom-color: var(--glass-rim);
+    box-shadow: var(--glass-shadow);
+  }
+}
+
+/* 还能虚化：底色已经是半透明了，这时开 backdrop-filter 才有意义（-webkit- 供旧 Safari） */
+@supports (background: color-mix(in srgb, red 50%, transparent)) and
+          ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .site-header {
     -webkit-backdrop-filter: var(--glass-filter);
     backdrop-filter: var(--glass-filter);
   }
