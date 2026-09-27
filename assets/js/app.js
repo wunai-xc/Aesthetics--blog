@@ -200,7 +200,7 @@
         sub: p.kicker + ' · ' + p.date + ' · ' + p.minutes + ' 分钟',
         keywords: p.tags.join(' '),
         color: p.cover[0],
-        run: function () { AB.router.go('#/post/' + p.slug); }
+        run: function () { AB.router.go('/post/' + p.slug); }
       });
     });
 
@@ -210,7 +210,7 @@
         title: '#' + t.tag,
         sub: t.count + ' 篇文章',
         color: 'var(--c2)',
-        run: function () { AB.router.go('#/archive?tag=' + encodeURIComponent(t.tag)); }
+        run: function () { AB.router.go('/archive?tag=' + encodeURIComponent(t.tag)); }
       });
     });
 

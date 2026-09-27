@@ -55,7 +55,7 @@
       : '';
     return '' +
       '<article class="' + cls + '" data-tilt data-tilt-depth="' + (o.feature ? 3 : 5) + '" data-reveal="up" data-reveal-delay="' + (o.delay || 0) + '">' +
-        '<a class="card-link" href="#/post/' + post.slug + '" aria-label="阅读：' + esc(post.title) + '"></a>' +
+        '<a class="card-link" href="/post/' + post.slug + '" aria-label="阅读：' + esc(post.title) + '"></a>' +
         readMark +
         '<div class="card-media">' + coverMarkup(post, index) + '<span class="card-media-num">' + num + '</span></div>' +
         '<div class="card-body">' +
@@ -123,8 +123,8 @@
           '<h1 class="hero-title">' + lines + '</h1>' +
           '<p class="hero-sub" data-reveal="up" data-reveal-delay="0.3">' + esc(AB.HERO.sub) + '</p>' +
           '<div class="hero-actions" data-reveal="up" data-reveal-delay="0.4">' +
-            '<a class="btn btn-primary" href="#/archive" data-magnetic>开始阅读<span class="btn-arrow">→</span></a>' +
-            '<a class="btn btn-outline" href="#/lab" data-magnetic>打开色彩实验室</a>' +
+            '<a class="btn btn-primary" href="/archive" data-magnetic>开始阅读<span class="btn-arrow">→</span></a>' +
+            '<a class="btn btn-outline" href="/lab" data-magnetic>打开色彩实验室</a>' +
             '<span class="scroll-cue"><span class="cue-line" aria-hidden="true"></span>向下滚动</span>' +
           '</div>' +
           '<div class="hero-figures" data-reveal="up" data-reveal-delay="0.5">' + figures + '</div>' +
@@ -145,7 +145,7 @@
               '<p class="eyebrow">精选</p>' +
               '<h2>先读这三篇<span class="thin">，它们决定了整站的颜色逻辑</span></h2>' +
             '</div>' +
-            '<a class="btn btn-ghost" href="#/archive">全部文章<span class="btn-arrow">→</span></a>' +
+            '<a class="btn btn-ghost" href="/archive">全部文章<span class="btn-arrow">→</span></a>' +
           '</div>' +
         '</div>' +
         '<div class="post-grid" data-stagger>' +
@@ -188,7 +188,7 @@
               '<p class="eyebrow">色彩系统</p>' +
               '<h2>八套配色<span class="thin">，点一下整站换血</span></h2>' +
             '</div>' +
-            '<a class="btn btn-outline" href="#/lab" data-magnetic>进入实验室<span class="btn-arrow">→</span></a>' +
+            '<a class="btn btn-outline" href="/lab" data-magnetic>进入实验室<span class="btn-arrow">→</span></a>' +
           '</div>' +
         '</div>' +
         '<div class="palette-grid" data-stagger data-reveal="up">' + AB.PALETTES.map(paletteCard).join('') + '</div>' +
@@ -213,13 +213,13 @@
             '<p class="lede">纯静态站点没有后端，订阅框填了也发不出去，所以这里不放表单。想第一时间看到新文章就订阅 RSS；不想订阅，收藏这个页面也一样。</p>' +
             '<div class="cluster">' +
               '<a class="btn btn-outline" href="feed.xml">订阅 RSS<span class="btn-arrow">→</span></a>' +
-              '<a class="btn btn-ghost" href="#/archive">浏览全部文章</a>' +
+              '<a class="btn btn-ghost" href="/archive">浏览全部文章</a>' +
             '</div>' +
           '</div>' +
           '<div class="stack" data-reveal="up" data-reveal-delay="0.1">' +
             '<p class="mono-label">正在写</p>' +
             '<p class="lede"><span class="accent-1" data-type="' + esc(AB.SITE.now) + '|把动效做成语法而不是装饰|色块面积与字阶的换算表">' + '</span><span class="accent-1" aria-hidden="true">▌</span></p>' +
-            '<p class="form-note">平均每月一到两篇。写完会出现在 <a href="#/archive">文章列表</a> 里，也会进 <code>feed.xml</code>。</p>' +
+            '<p class="form-note">平均每月一到两篇。写完会出现在 <a href="/archive">文章列表</a> 里，也会进 <code>feed.xml</code>。</p>' +
           '</div>' +
         '</div>' +
       '</section>';
@@ -353,9 +353,9 @@
             state.tag = chip.getAttribute('data-tag') || '';
             chips.forEach(function (c) { c.classList.toggle('is-active', c === chip); });
             if (window.history && window.history.replaceState) {
-              var hash = '#/archive' + (state.tag ? '?tag=' + encodeURIComponent(state.tag) : '');
-              /* file:// 或隐私模式下 replaceState 可能抛错，过滤本身不依赖它 */
-              try { window.history.replaceState(null, '', hash); } catch (err) { /* 忽略 */ }
+              var address = '/archive' + (state.tag ? '?tag=' + encodeURIComponent(state.tag) : '');
+              /* 异常状态下 replaceState 可能抛错，过滤本身不依赖它 */
+              try { window.history.replaceState(null, '', address); } catch (err) { /* 忽略 */ }
             }
             render(true);
           });
@@ -411,7 +411,7 @@
     var html = '' +
       '<article data-article data-post="' + post.slug + '">' +
         '<header class="post-head container">' +
-          '<p class="post-breadcrumb"><a href="#/">首页</a><span aria-hidden="true">/</span><a href="#/archive">文章</a><span aria-hidden="true">/</span><span>' + esc(post.kicker) + '</span></p>' +
+          '<p class="post-breadcrumb"><a href="/">首页</a><span aria-hidden="true">/</span><a href="/archive">文章</a><span aria-hidden="true">/</span><span>' + esc(post.kicker) + '</span></p>' +
           '<div class="cluster" data-reveal="fade">' + tagsMarkup(post, 'flat') + '</div>' +
           '<h1 class="post-title" data-reveal="up">' + esc(post.title) + '</h1>' +
           '<div class="post-meta" data-reveal="up" data-reveal-delay="0.08">' +
@@ -449,13 +449,13 @@
             }).join('') : '<p class="text-dim">这是这个标签下的唯一一篇。</p>') +
           '</div>' +
           '<div class="post-nav">' +
-            (prev ? '<a class="post-nav-card" href="#/post/' + prev.slug + '" style="--cover:linear-gradient(100deg,' + prev.cover[0] + ',' + prev.cover[1] + ',' + prev.cover[2] + ')"><span>← 上一篇</span><b>' + esc(prev.title) + '</b></a>' : '') +
-            (next ? '<a class="post-nav-card" href="#/post/' + next.slug + '" style="--cover:linear-gradient(100deg,' + next.cover[0] + ',' + next.cover[1] + ',' + next.cover[2] + ')"><span>下一篇 →</span><b>' + esc(next.title) + '</b></a>' : '') +
+            (prev ? '<a class="post-nav-card" href="/post/' + prev.slug + '" style="--cover:linear-gradient(100deg,' + prev.cover[0] + ',' + prev.cover[1] + ',' + prev.cover[2] + ')"><span>← 上一篇</span><b>' + esc(prev.title) + '</b></a>' : '') +
+            (next ? '<a class="post-nav-card" href="/post/' + next.slug + '" style="--cover:linear-gradient(100deg,' + next.cover[0] + ',' + next.cover[1] + ',' + next.cover[2] + ')"><span>下一篇 →</span><b>' + esc(next.title) + '</b></a>' : '') +
           '</div>' +
           '<div class="divider" aria-hidden="true"></div>' +
           '<div class="spread">' +
             '<div>这篇看完了。列表里还有 ' + (AB.POSTS.length - 1) + ' 篇关于色彩、动效与排版的笔记。</div>' +
-            '<a class="btn btn-outline" href="#/archive" data-magnetic>回到文章列表</a>' +
+            '<a class="btn btn-outline" href="/archive" data-magnetic>回到文章列表</a>' +
           '</div>' +
         '</footer>' +
       '</article>';
@@ -482,7 +482,7 @@
           }
         }
 
-        /* 从分享链接进来：定位到指定小节（#/post/<slug>?s=sec-2） */
+        /* 从分享链接进来：定位到指定小节（/post/<slug>?s=sec-2） */
         if (query && query.get('s')) {
           var section = document.getElementById(query.get('s'));
           if (section) window.setTimeout(function () { section.scrollIntoView({ block: 'start' }); }, 80);
@@ -652,7 +652,7 @@
             '<h2>这些颜色从哪来</h2>' +
             '<p class="text-dim">每一套配色都是「一地色 + 三色相」结构：主色负责指示、副色负责氛围、刺激色负责状态。切换它们时版式与对比关系保持不变，所以整站结构不会走形。</p>' +
             '<p class="text-dim">实验室里生成的颜色会写入 19 个 CSS 变量并保存在本地。刷新页面后依然是你选的那一套。</p>' +
-            '<a class="btn btn-ghost" href="#/archive">去看配色方法论<span class="btn-arrow">→</span></a>' +
+            '<a class="btn btn-ghost" href="/archive">去看配色方法论<span class="btn-arrow">→</span></a>' +
           '</div>' +
         '</div>' +
       '</section>';
@@ -939,7 +939,7 @@
           '</div>' +
           '<div class="stack" data-reveal="up" data-reveal-delay="0.08">' +
             '<h2>这个站的技术清单</h2>' +
-            '<p class="text-dim">HTML 结构 + CSS 变量系统 + 原生 ES5 级 JavaScript。没有 <code>node_modules</code>，没有打包器，克隆下来双击 <code>index.html</code> 就能用。</p>' +
+            '<p class="text-dim">HTML 结构 + CSS 变量系统 + 原生 ES5 级 JavaScript。没有 <code>node_modules</code>，没有打包器，克隆下来起一个静态服务器（<code>python3 -m http.server 8080</code>）就能跑。</p>' +
             '<ul class="text-dim">' +
               '<li>Hash 路由与三色遮罩过渡</li>' +
               '<li>IntersectionObserver 滚动揭示</li>' +
@@ -1011,7 +1011,7 @@
       '</section>' +
 
       (empty
-        ? '<section class="container"><div class="archive-empty"><p>书架还是空的。</p><p class="form-note">在文章页点「收藏」或「点赞」，滚动过的文章会自动记下进度，然后回到这里。</p><div class="cluster" style="justify-content:center"><a class="btn btn-primary" href="#/archive">去看文章<span class="btn-arrow">→</span></a></div></div></section>'
+        ? '<section class="container"><div class="archive-empty"><p>书架还是空的。</p><p class="form-note">在文章页点「收藏」或「点赞」，滚动过的文章会自动记下进度，然后回到这里。</p><div class="cluster" style="justify-content:center"><a class="btn btn-primary" href="/archive">去看文章<span class="btn-arrow">→</span></a></div></div></section>'
         : '') +
 
       (reading.length
@@ -1019,7 +1019,7 @@
             '<div class="section-head" data-reveal="up"><p class="eyebrow">在读</p><h2>继续阅读<span class="thin">，进度记在你本地</span></h2></div>' +
             '<div class="shelf-progress">' + reading.map(function (post) {
               var pct = Math.round(AB.store.readRatio(post.slug) * 100);
-              return '<a class="shelf-row" href="#/post/' + post.slug + '" data-reveal="up">' +
+              return '<a class="shelf-row" href="/post/' + post.slug + '" data-reveal="up">' +
                 '<span class="shelf-title">' + esc(post.title) + '</span>' +
                 '<div class="meter"><div class="meter-top"><b>' + esc(post.kicker) + '</b><span>' + pct + '%</span></div>' +
                 '<div class="meter-track"><span class="meter-fill" data-value="' + pct + '" style="background:var(--c1)"></span></div></div>' +
@@ -1047,7 +1047,7 @@
             '<button class="btn btn-outline" type="button" data-shelf-clear="saved">清空收藏</button>' +
             '<button class="btn btn-outline" type="button" data-shelf-clear="likes">清空点赞</button>' +
             '<button class="btn btn-outline" type="button" data-shelf-clear="reads">清空阅读进度</button>' +
-            '<a class="btn btn-ghost" href="#/privacy">本地到底存了什么<span class="btn-arrow">→</span></a>' +
+            '<a class="btn btn-ghost" href="/privacy">本地到底存了什么<span class="btn-arrow">→</span></a>' +
           '</div>' +
         '</div>' +
       '</section>';
@@ -1065,7 +1065,7 @@
             else AB.store.prefs[key] = [];
             AB.store.apply('shelf');
             AB.fx.toast('已清空本地的' + labels[key]);
-            AB.router.go('#/saved');
+            AB.router.go('/saved');
           });
         });
       }
@@ -1113,7 +1113,7 @@
 
           '<h2>怎么清掉</h2>' +
           '<ul>' +
-            '<li>分类清空：<a href="#/saved">本地书架</a> 页底部可分别清空收藏 / 点赞 / 阅读进度。</li>' +
+            '<li>分类清空：<a href="/saved">本地书架</a> 页底部可分别清空收藏 / 点赞 / 阅读进度。</li>' +
             '<li>全部恢复默认：显示设置面板里的「恢复默认」（保留访问次数）。</li>' +
             '<li>彻底清除：浏览器设置里删除本站的站点数据，键会随站点一起消失。</li>' +
           '</ul>' +
@@ -1148,8 +1148,8 @@
         '<h1 data-reveal="up" data-reveal-delay="0.06">这个颜色不在调色板里</h1>' +
         '<p class="lede" data-reveal="up" data-reveal-delay="0.12">你要找的页面可能被重命名、合并，或者从来没有存在过。</p>' +
         '<div class="cluster" data-reveal="up" data-reveal-delay="0.18">' +
-          '<a class="btn btn-primary" href="#/" data-magnetic>回到首页<span class="btn-arrow">→</span></a>' +
-          '<a class="btn btn-outline" href="#/archive">看看全部文章</a>' +
+          '<a class="btn btn-primary" href="/" data-magnetic>回到首页<span class="btn-arrow">→</span></a>' +
+          '<a class="btn btn-outline" href="/archive">看看全部文章</a>' +
         '</div>' +
       '</section>';
 

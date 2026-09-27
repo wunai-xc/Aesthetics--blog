@@ -12,6 +12,9 @@ AB.SITE = {
   author: 'wunai',
   email: 'hello@aesthetics.blog',
   repo: 'https://github.com/wunai-xc/Aesthetics--blog',
+  /* 规范链接（canonical / og:url）与小节分享链接都用它拼绝对地址；
+     换域名时改这一行，外加 index.html 的 canonical / og:url 与 feed.xml / sitemap.xml / robots.txt */
+  origin: 'https://aeblog.wunai.top',
   since: 2019,
   now: '配色系统与滚动叙事的边界'
 };
@@ -37,12 +40,12 @@ AB.PALETTES = [
 
 /* 站内命令（命令面板用） ------------------------------------------------- */
 AB.COMMANDS = [
-  { id: 'go-home',    title: '前往：首页',        sub: 'Hash 路由 #/',        icon: '#c8ff2f', run: '#/' },
-  { id: 'go-archive', title: '前往：全部文章',    sub: 'Hash 路由 #/archive', icon: '#6b5cff', run: '#/archive' },
-  { id: 'go-lab',     title: '前往：色彩实验室',  sub: 'Hash 路由 #/lab',     icon: '#ff4d6d', run: '#/lab' },
-  { id: 'go-about',   title: '前往：关于本站',    sub: 'Hash 路由 #/about',   icon: '#ffd166', run: '#/about' },
-  { id: 'go-saved',   title: '前往：本地书架',    sub: '收藏 · 点赞 · 在读进度', icon: '#14f1c8', run: '#/saved' },
-  { id: 'go-privacy', title: '前往：隐私与数据',  sub: '本地存了什么、不存什么', icon: '#9797a3', run: '#/privacy' },
+  { id: 'go-home',    title: '前往：首页',        sub: '路径路由 /',          icon: '#c8ff2f', run: '/' },
+  { id: 'go-archive', title: '前往：全部文章',    sub: '路径路由 /archive',   icon: '#6b5cff', run: '/archive' },
+  { id: 'go-lab',     title: '前往：色彩实验室',  sub: '路径路由 /lab',       icon: '#ff4d6d', run: '/lab' },
+  { id: 'go-about',   title: '前往：关于本站',    sub: '路径路由 /about',     icon: '#ffd166', run: '/about' },
+  { id: 'go-saved',   title: '前往：本地书架',    sub: '收藏 · 点赞 · 在读进度', icon: '#14f1c8', run: '/saved' },
+  { id: 'go-privacy', title: '前往：隐私与数据',  sub: '本地存了什么、不存什么', icon: '#9797a3', run: '/privacy' },
   { id: 'act-palette', title: '动作：切换下一套配色', sub: '快捷键 P',        icon: '#14f1c8', action: 'palette' },
   { id: 'act-random',  title: '动作：随机生成一套配色', sub: '快捷键 L',      icon: '#ff2fb9', action: 'random-palette' },
   { id: 'act-confetti', title: '动作：撒一把彩纸',  sub: '快捷键 C',          icon: '#ffe14d', action: 'confetti' },
@@ -296,7 +299,7 @@ AB.POSTS = [
 
       <h2>清单：本站实际用到的能力</h2>
       <ul>
-        <li><strong>Hash 路由</strong>：<code>#/archive</code>、<code>#/post/slug</code>，刷新与分享都能直达。</li>
+        <li><strong>路径路由</strong>：<code>/archive</code>、<code>/post/slug</code> 是真实地址，刷新、分享与被收录都不受影响。</li>
         <li><strong>命令面板</strong>：<code>dialog</code> + 键盘上下键 + 简易模糊匹配。</li>
         <li><strong>滚动揭示</strong>：<code>IntersectionObserver</code> 一次性初始化，进入后退场观察。</li>
         <li><strong>阅读进度与目录高亮</strong>：滚动位置映射到标题，右侧目录实时激活。</li>
@@ -305,14 +308,18 @@ AB.POSTS = [
         <li><strong>canvas 氛围与彩纸</strong>：两个 canvas 层，指针驱动与一次性粒子。</li>
       </ul>
 
-      <h2>路由与服务端没关系</h2>
-      <pre class="code-block" data-lang="js"><code><span class="tok-key">window</span>.addEventListener(<span class="tok-val">'hashchange'</span>, render);
-<span class="tok-key">function</span> parse(hash) {
-  <span class="tok-key">const</span> [path, query] = hash.replace(/^#\\/?/, <span class="tok-val">''</span>).split(<span class="tok-val">'?'</span>);
-  <span class="tok-key">const</span> [head, tail] = path.split(<span class="tok-val">'/'</span>);
-  <span class="tok-key">return</span> { name: head || <span class="tok-val">'home'</span>, param: tail, query: <span class="tok-key">new</span> URLSearchParams(query || <span class="tok-val">''</span>) };
-}</code></pre>
-      <p>解析出来的是 <code>{ name, param, query }</code>，用它去 <code>AB.views</code> 里取渲染函数即可。整站只有这一处判断路径。</p>
+      <h2>路由只多要一条服务器规则</h2>
+      <pre class="code-block" data-lang="js"><code><span class="tok-com">// 接管站内链接：不整页刷新，只换视图并压一条历史记录</span>
+<span class="tok-key">document</span>.addEventListener(<span class="tok-val">'click'</span>, onClick);
+<span class="tok-key">window</span>.addEventListener(<span class="tok-val">'popstate'</span>, render);
+<span class="tok-key">history</span>.pushState(<span class="tok-val">null</span>, <span class="tok-val">''</span>, <span class="tok-val">'/post/oklch-practice'</span>);</code></pre>
+      <p>直接打开 <code>/post/slug</code> 时，请求先到服务器，服务器必须先返回入口 HTML，剩下的事情才交给前端。所以静态托管上要写一条回退规则——Cloudflare Pages 用根目录的 <code>_redirects</code>：</p>
+      <pre class="code-block" data-lang="sh"><code># 已知路由回退到入口文件：URL 不变，状态码 200
+/post/*  /index.html  200
+/archive  /index.html  200
+# 未知路径故意不写：让它落到 404.html，返回真正的 404</code></pre>
+      <p>回退只写给已知路由，这样坏地址仍然是 404 状态码，而不是伪装成 200 的「软 404」。点击链接时前端只拦截同源站内地址并压一条历史记录，中键、Ctrl+点击、外链与 <code>/feed.xml</code> 这类静态文件都照常交给浏览器。</p>
+      <p>页面内的锚点（<code>#sec-2</code>）不参与路由：它只触发浏览器的同文档跳转，不会让视图重新渲染一遍，否则点一下目录就会把文章切走。</p>
 
       <h2>过渡动画不需要 View Transitions API</h2>
       <p>三色遮罩（<code>.veil</code>）向下盖住 120ms，换内容，再向上揭开 420ms。视觉上像一次翻页，兼容性比新 API 好得多，代价是 20 行 CSS 与两个类名。</p>
@@ -322,7 +329,7 @@ AB.POSTS = [
       <blockquote>
         <p>能被静态托管的交互，就不要引入运行时。少一层依赖，多一年可维护性。</p>
       </blockquote>
-      <p>仓库里没有 <code>node_modules</code>，十几个纯文本文件，克隆下来直接双击 <code>index.html</code> 就能用。</p>
+      <p>仓库里没有 <code>node_modules</code>，十几个纯文本文件，起一个静态服务器（<code>python3 -m http.server 8080</code>）就能跑。</p>
     `
   },
   {

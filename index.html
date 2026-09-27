@@ -7,8 +7,9 @@
 <meta name="description" content="一个关于色彩、动效与排版的静态博客：八套配色系统、可切换的动效与配色、零依赖——字体与脚本全部在仓库里。">
 <meta name="theme-color" content="#07070a" id="themeColor">
 <meta name="color-scheme" content="dark light">
-<!-- 部署在 Cloudflare Pages，域名 https://aeblog.wunai.top（下面两行 + feed.xml / sitemap.xml / robots.txt 是全部出现域名的地方）。
-     Hash 路由下所有 #/… 状态共享同一个文档，因此规范地址就是根地址。 -->
+<!-- 部署在 Cloudflare Pages，域名 https://aeblog.wunai.top（下面两行、feed.xml / sitemap.xml / robots.txt，
+     以及 data.js 里的 AB.SITE.origin，是全部出现域名的地方）。
+     这里是入口 HTML 的静态规范地址：/archive、/post/… 这类路径由 router.js 在渲染后改写成本页地址。 -->
 <link rel="canonical" href="https://aeblog.wunai.top/">
 <meta property="og:title" content="AESTHETICS — 纯粹色彩美学">
 <meta property="og:description" content="色彩即结构。八套配色系统、滚动动效、色彩实验室。">
@@ -21,13 +22,14 @@
      想换回 Fraunces / Space Grotesk / JetBrains Mono，把下面这行放回 head 里，
      并在 tokens.css 的 --font-* 最前面接上对应字体名即可：
      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@400..700&display=swap"> -->
-<link rel="alternate" type="application/rss+xml" title="AESTHETICS 全部文章" href="feed.xml">
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/views.css">
-<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="alternate" type="application/rss+xml" title="AESTHETICS 全部文章" href="/feed.xml">
+<!-- 资源一律用根绝对路径：/post/<slug> 这类地址下，相对路径会被解析到 /post/assets/… 上 -->
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/layout.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href="/assets/css/views.css">
+<link rel="stylesheet" href="/assets/css/animations.css">
 <script>document.documentElement.className = 'js';</script>
 </head>
 <body>
@@ -57,16 +59,16 @@
 <header class="site-header" id="siteHeader">
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
   <div class="header-inner container">
-    <a class="brand" href="#/" aria-label="AESTHETICS 首页">
+    <a class="brand" href="/" aria-label="AESTHETICS 首页">
       <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
       <span class="brand-name">AESTHETICS</span>
     </a>
 
     <nav class="nav main-nav" aria-label="主导航">
-      <a href="#/" data-nav="home">首页</a>
-      <a href="#/archive" data-nav="archive">文章</a>
-      <a href="#/lab" data-nav="lab">色彩实验室</a>
-      <a href="#/about" data-nav="about">关于</a>
+      <a href="/" data-nav="home">首页</a>
+      <a href="/archive" data-nav="archive">文章</a>
+      <a href="/lab" data-nav="lab">色彩实验室</a>
+      <a href="/about" data-nav="about">关于</a>
     </nav>
 
     <div class="header-actions">
@@ -89,10 +91,10 @@
 <div class="mobile-menu" id="mobileMenu" hidden>
   <div class="mobile-menu-inner container">
     <nav aria-label="移动端导航">
-      <a href="#/" data-nav-mobile="home"><em>01</em>首页</a>
-      <a href="#/archive" data-nav-mobile="archive"><em>02</em>文章</a>
-      <a href="#/lab" data-nav-mobile="lab"><em>03</em>色彩实验室</a>
-      <a href="#/about" data-nav-mobile="about"><em>04</em>关于</a>
+      <a href="/" data-nav-mobile="home"><em>01</em>首页</a>
+      <a href="/archive" data-nav-mobile="archive"><em>02</em>文章</a>
+      <a href="/lab" data-nav-mobile="lab"><em>03</em>色彩实验室</a>
+      <a href="/about" data-nav-mobile="about"><em>04</em>关于</a>
     </nav>
     <div class="mobile-palettes" aria-label="快速配色">
       <p class="mono-label">配色</p>
@@ -127,20 +129,20 @@
     </div>
     <div class="footer-col">
       <p class="mono-label">导航</p>
-      <a href="#/">首页</a>
-      <a href="#/archive">全部文章</a>
-      <a href="#/lab">色彩实验室</a>
-      <a href="#/about">关于本站</a>
-      <a href="#/saved">本地书架</a>
-      <a href="#/privacy">隐私与数据</a>
-      <a href="feed.xml">RSS 订阅</a>
+      <a href="/">首页</a>
+      <a href="/archive">全部文章</a>
+      <a href="/lab">色彩实验室</a>
+      <a href="/about">关于本站</a>
+      <a href="/saved">本地书架</a>
+      <a href="/privacy">隐私与数据</a>
+      <a href="/feed.xml">RSS 订阅</a>
     </div>
     <div class="footer-col">
       <p class="mono-label">标签</p>
-      <a href="#/archive?tag=色彩">色彩</a>
-      <a href="#/archive?tag=动效">动效</a>
-      <a href="#/archive?tag=排版">排版</a>
-      <a href="#/archive?tag=前端">前端</a>
+      <a href="/archive?tag=色彩">色彩</a>
+      <a href="/archive?tag=动效">动效</a>
+      <a href="/archive?tag=排版">排版</a>
+      <a href="/archive?tag=前端">前端</a>
     </div>
     <div class="footer-col">
       <p class="mono-label">快捷键</p>
@@ -249,11 +251,11 @@
 <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
 <canvas class="confetti-canvas" id="confetti" aria-hidden="true"></canvas>
 
-<script src="assets/js/data.js"></script>
-<script src="assets/js/store.js"></script>
-<script src="assets/js/fx.js"></script>
-<script src="assets/js/views.js"></script>
-<script src="assets/js/router.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/store.js"></script>
+<script src="/assets/js/fx.js"></script>
+<script src="/assets/js/views.js"></script>
+<script src="/assets/js/router.js"></script>
+<script src="/assets/js/app.js"></script>
 </body>
 </html>

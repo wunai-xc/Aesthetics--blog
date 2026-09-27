@@ -864,9 +864,8 @@
       btn.textContent = '#';
       btn.setAttribute('aria-label', '复制这一节的链接');
       btn.addEventListener('click', function () {
-        /* 用 href 去掉 hash，file:// 下 origin 会是 "null"，拼 origin 会得到坏地址 */
-        var base = window.location.href.split('#')[0];
-        var url = base + '#/post/' + slug + '?s=' + heading.id;
+        /* 绝对地址交给 router 拼（站点域名只有一个来源），也避免带上当前地址的查询串 */
+        var url = AB.router.url('/post/' + slug + '?s=' + heading.id);
         fx.copy(url, function () { fx.toast('已复制这一节的链接'); });
       });
       heading.appendChild(btn);
